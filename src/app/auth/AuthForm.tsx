@@ -69,14 +69,14 @@ export default function AuthForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Título dinámico */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
           {mode === "register" ? "Crear cuenta" : "Iniciar sesión"}
         </h1>
         {mode === "register" && (
-          <p className="mt-1 text-sm text-stone-400">Solo la primera vez.</p>
+          <p className="mt-1.5 text-sm text-stone-400">Solo la primera vez.</p>
         )}
       </div>
 
@@ -85,7 +85,7 @@ export default function AuthForm() {
         <button
           type="button"
           onClick={() => { setMode("register"); setErrorMsg(null); }}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition-all ${
+          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
             mode === "register" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
         >
@@ -94,7 +94,7 @@ export default function AuthForm() {
         <button
           type="button"
           onClick={() => { setMode("login"); setErrorMsg(null); }}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition-all ${
+          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
             mode === "login" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
         >
@@ -103,14 +103,14 @@ export default function AuthForm() {
       </div>
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {mode === "register" && (
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Nombre"
-            className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+            className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
           />
         )}
         <input
@@ -119,7 +119,7 @@ export default function AuthForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="Email"
-          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
         />
         <input
           type="password"
@@ -128,7 +128,7 @@ export default function AuthForm() {
           required
           minLength={6}
           placeholder="Contraseña"
-          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
         />
 
         {errorMsg && (
