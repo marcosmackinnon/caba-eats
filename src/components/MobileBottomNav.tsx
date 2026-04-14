@@ -16,6 +16,9 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const { favorites } = useFavorites();
 
+  // No mostrar en la pantalla de auth
+  if (pathname.startsWith("/auth")) return null;
+
   return (
     <nav className="fixed inset-x-4 bottom-4 z-50 flex items-center justify-around gap-1 rounded-[28px] border border-white/80 bg-white/92 px-2 py-2 shadow-[0_18px_45px_rgba(201,97,36,0.16)] backdrop-blur md:hidden">
       {items.map((item) => {

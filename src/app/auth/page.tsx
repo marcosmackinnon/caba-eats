@@ -10,9 +10,11 @@ export default function AuthPage() {
         </span>
       </div>
 
-      {/* Formulario */}
-      <div className="w-full max-w-sm mx-auto">
-        <AuthForm />
+      {/* Formulario centrado en el espacio restante */}
+      <div className="flex flex-1 items-center justify-center pb-10">
+        <div className="w-full max-w-sm">
+          <AuthForm />
+        </div>
       </div>
     </main>
   );
