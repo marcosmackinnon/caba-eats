@@ -3,8 +3,8 @@ import AuthForm from "./AuthForm";
 export default function AuthPage() {
   return (
     <main className="min-h-screen bg-[#fffaf4] flex flex-col px-5">
-      {/* Logo arriba */}
-      <div className="pt-16 pb-12 text-center">
+      {/* Logo */}
+      <div className="pt-28 pb-10 text-center">
         <span className="text-5xl font-bold tracking-[-0.04em] text-stone-900">
           Don<span className="text-[#f27a3f]">dy</span>
         </span>
