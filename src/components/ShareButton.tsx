@@ -2,16 +2,20 @@
 
 import { useState } from "react";
 
+import { logRestaurantInteraction } from "@/lib/supabase/events";
+
 export default function ShareButton({
   title,
   text,
   url,
   label = "Compartir",
+  restaurantSlug,
 }: {
   title: string;
   text: string;
   url?: string;
   label?: string;
+  restaurantSlug?: string;
 }) {
   const [status, setStatus] = useState<"idle" | "copied">("idle");
 
@@ -19,6 +23,7 @@ export default function ShareButton({
     const shareUrl = url
       ? new URL(url, window.location.origin).toString()
       : window.location.href;
+    const fallbackText = text ? `${text}\n${shareUrl}` : shareUrl;
 
     if (navigator.share) {
       try {
@@ -29,16 +34,23 @@ export default function ShareButton({
         });
         return;
       } catch {
-        return;
+        // Si falla o se cancela, seguimos con copiar link para que no sea un botón muerto.
       }
     }
 
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(fallbackText);
       setStatus("copied");
       window.setTimeout(() => setStatus("idle"), 1800);
     } catch {
-      window.prompt("Copiá este link", shareUrl);
+      window.prompt("Copiá este link", fallbackText);
+    }
+
+    if (restaurantSlug) {
+      void logRestaurantInteraction({
+        restaurantSlug,
+        action: "shared",
+      });
     }
   }
 

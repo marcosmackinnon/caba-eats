@@ -32,7 +32,7 @@ export default function Home() {
                 Encontrá dónde comer en instantes.
               </h1>
               <p className="max-w-md text-base leading-7 text-stone-500 sm:text-lg">
-                Elegís el plan, la comida, la zona — y te devolvemos las mejores 3 opciones.
+                Elegís el plan, la comida y tu ubicación o zona, y te devolvemos las mejores 3 opciones.
               </p>
             </div>
 

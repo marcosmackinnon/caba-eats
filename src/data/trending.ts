@@ -6,5 +6,5 @@ export const trendingSpot = {
   headline: "El restaurante que todos quieren probar esta semana.",
   description:
     "Un lugar que explotó en redes y hoy aparece en conversaciones, videos y listas de lugares por conocer.",
-  updatedAt: "Actualizado hoy",
+  updatedAt: "Selección editorial de abril 2026",
 };

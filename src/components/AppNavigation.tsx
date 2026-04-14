@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import AuthStatus from "./AuthStatus";
 import { useFavorites } from "./FavoritesProvider";
 
 const items = [
@@ -46,6 +47,7 @@ export default function AppNavigation() {
           </Link>
         );
       })}
+      <AuthStatus />
     </nav>
   );
 }

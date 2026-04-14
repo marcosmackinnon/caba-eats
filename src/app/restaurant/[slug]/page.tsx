@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 import AppNavigation from "@/components/AppNavigation";
 import FavoriteButton from "@/components/FavoriteButton";
 import MenuSheet from "@/components/MenuSheet";
+import RestaurantViewTracker from "@/components/RestaurantViewTracker";
 import ShareButton from "@/components/ShareButton";
 import {
   formatDistance,
   formatPrice,
+  getRestaurantDistanceKm,
   restaurants,
 } from "@/data/restaurants";
 
@@ -18,6 +20,9 @@ type SearchParams = Promise<{
   vibe?: string;
   budget?: string;
   distance?: string;
+  userLat?: string;
+  userLng?: string;
+  userLabel?: string;
 }>;
 
 type Params = Promise<{
@@ -48,18 +53,34 @@ export default async function RestaurantDetailPage({
     notFound();
   }
 
+  const hasGpsReference = Boolean(filters.userLat && filters.userLng);
   const backParams = new URLSearchParams({
     plan: filters.plan ?? "Con amigos",
     cuisine: filters.cuisine ?? "Sin preferencia",
-    zone: filters.zone ?? "Palermo",
     vibe: filters.vibe ?? "",
     budget: filters.budget ?? "28000",
     distance: filters.distance ?? "6",
+    ...(hasGpsReference
+      ? {
+          userLat: filters.userLat ?? "",
+          userLng: filters.userLng ?? "",
+          userLabel: filters.userLabel ?? "Tu ubicación actual",
+        }
+      : { zone: filters.zone ?? "Palermo" }),
   }).toString();
   const menuItems = buildMenuItems(restaurant);
+  const computedDistance = getRestaurantDistanceKm(restaurant, {
+    userLat: filters.userLat ? Number(filters.userLat) : undefined,
+    userLng: filters.userLng ? Number(filters.userLng) : undefined,
+    zone: filters.zone,
+  });
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,_#fffaf4_0%,_#fff4e8_100%)] px-4 py-4 pb-28 text-stone-900 sm:px-10 sm:py-6 md:pb-0 lg:px-12">
+      <RestaurantViewTracker
+        slug={restaurant.slug}
+        source={hasGpsReference ? "gps" : filters.zone ?? "unknown"}
+      />
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col">
         <header className="flex items-center justify-between">
           <Link
@@ -133,7 +154,7 @@ export default async function RestaurantDetailPage({
                       Distancia
                     </p>
                     <p className="mt-2 text-sm font-semibold text-stone-900">
-                      {formatDistance(restaurant.distanceKm)}
+                      {formatDistance(computedDistance)}
                     </p>
                   </div>
                   <div className="col-span-2 rounded-2xl bg-[#fff8f2] p-4">
@@ -197,6 +218,7 @@ export default async function RestaurantDetailPage({
                   text={`Te comparto ${restaurant.name}, una opción de ${restaurant.cuisine} en ${restaurant.zone}.`}
                   url={`/restaurant/${restaurant.slug}?${backParams}`}
                   label="Compartir"
+                  restaurantSlug={restaurant.slug}
                 />
               </div>
 

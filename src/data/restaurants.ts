@@ -11,6 +11,8 @@ export type Restaurant = {
   vibeTags: string[];
   price: number;
   distanceKm: number;
+  lat: number;
+  lng: number;
   rating: number;
   reviews: number;
   comfortScore: number;
@@ -41,6 +43,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Social", "Divertido", "Especial"],
     price: 32000,
     distanceKm: 1.6,
+    lat: -34.5904,
+    lng: -58.4378,
     rating: 4.7,
     reviews: 418,
     comfortScore: 7,
@@ -73,6 +77,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Social", "Especial", "Compartir"],
     price: 42000,
     distanceKm: 1.2,
+    lat: -34.5867,
+    lng: -58.4287,
     rating: 4.8,
     reviews: 4200,
     comfortScore: 9,
@@ -112,6 +118,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Romántico", "Cálido"],
     price: 36000,
     distanceKm: 2.5,
+    lat: -34.5946,
+    lng: -58.3945,
     rating: 4.6,
     reviews: 1200,
     comfortScore: 8,
@@ -147,6 +155,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Tranquilo", "Visual", "Especial"],
     price: 48000,
     distanceKm: 2.4,
+    lat: -34.5894,
+    lng: -58.4294,
     rating: 4.6,
     reviews: 1800,
     comfortScore: 6,
@@ -182,6 +192,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Tranquilo", "Lindo", "Saludable"],
     price: 24000,
     distanceKm: 2.1,
+    lat: -34.5916,
+    lng: -58.4268,
     rating: 4.5,
     reviews: 700,
     comfortScore: 7,
@@ -221,6 +233,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Rápido", "Social", "Divertido"],
     price: 22000,
     distanceKm: 2.2,
+    lat: -34.5924,
+    lng: -58.4284,
     rating: 4.3,
     reviews: 900,
     comfortScore: 7,
@@ -256,6 +270,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Tranquilo", "Rápido"],
     price: 21000,
     distanceKm: 1.7,
+    lat: -34.5888,
+    lng: -58.4266,
     rating: 4.4,
     reviews: 2100,
     comfortScore: 7,
@@ -287,6 +303,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Divertido", "Especial", "Social"],
     price: 32000,
     distanceKm: 2.6,
+    lat: -34.595,
+    lng: -58.3977,
     rating: 4.6,
     reviews: 1600,
     comfortScore: 6,
@@ -318,6 +336,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Especial", "Visual", "Cálido"],
     price: 41000,
     distanceKm: 2.3,
+    lat: -34.5894,
+    lng: -58.4294,
     rating: 4.6,
     reviews: 2500,
     comfortScore: 6,
@@ -346,9 +366,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "Muy a mano para resolver una salida rápida en una zona súper transitada",
     planFit: ["Algo rápido", "Con amigos"],
-    vibeTags: ["Rápido", "Compartir", "Relajado"],
+    vibeTags: ["Rápido", "Compartir", "Tranquilo"],
     price: 20000,
     distanceKm: 1.9,
+    lat: -34.5831,
+    lng: -58.4317,
     rating: 4.4,
     reviews: 2400,
     comfortScore: 8,
@@ -380,6 +402,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Compartir", "Visual"],
     price: 25000,
     distanceKm: 2.1,
+    lat: -34.5846,
+    lng: -58.438,
     rating: 4.5,
     reviews: 1100,
     comfortScore: 8,
@@ -408,9 +432,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "En una parte clásica de la ciudad, conocida por su identidad japonesa",
     planFit: ["Con amigos", "No sé todavía", "Algo rápido"],
-    vibeTags: ["Cálido", "Visual", "Relajado"],
+    vibeTags: ["Cálido", "Visual", "Tranquilo"],
     price: 27000,
     distanceKm: 5.4,
+    lat: -34.6157,
+    lng: -58.3748,
     rating: 4.5,
     reviews: 1300,
     comfortScore: 8,
@@ -442,6 +468,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Compartir", "Tranquilo", "Especial"],
     price: 30000,
     distanceKm: 3.4,
+    lat: -34.5558,
+    lng: -58.4538,
     rating: 4.3,
     reviews: 900,
     comfortScore: 7,
@@ -473,6 +501,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Especial", "Cálido", "Tranquilo"],
     price: 31000,
     distanceKm: 2.2,
+    lat: -34.5944,
+    lng: -58.4359,
     rating: 4.6,
     reviews: 1500,
     comfortScore: 6,
@@ -504,6 +534,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Divertido", "Visual", "Especial"],
     price: 29000,
     distanceKm: 6.2,
+    lat: -34.6094,
+    lng: -58.3765,
     rating: 4.4,
     reviews: 800,
     comfortScore: 6,
@@ -532,9 +564,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: true,
     neighborhoodNote: "En una zona muy elegida para salidas más modernas y cuidadas",
     planFit: ["En familia", "Con amigos", "Algo rápido"],
-    vibeTags: ["Relajado", "Saludable", "Lindo"],
+    vibeTags: ["Tranquilo", "Saludable", "Lindo"],
     price: 30000,
     distanceKm: 2.4,
+    lat: -34.5893,
+    lng: -58.4253,
     rating: 4.5,
     reviews: 950,
     comfortScore: 8,
@@ -563,9 +597,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "Rodeado de cafeterías y movimiento de fin de semana",
     planFit: ["Cita", "No sé todavía", "Algo rápido"],
-    vibeTags: ["Lindo", "Visual", "Relajado"],
+    vibeTags: ["Lindo", "Visual", "Tranquilo"],
     price: 21000,
     distanceKm: 1.5,
+    lat: -34.591,
+    lng: -58.429,
     rating: 4.4,
     reviews: 900,
     comfortScore: 8,
@@ -597,6 +633,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Compartir", "Cálido", "Tranquilo"],
     price: 26000,
     distanceKm: 2.8,
+    lat: -34.5972,
+    lng: -58.4302,
     rating: 4.5,
     reviews: 2600,
     comfortScore: 8,
@@ -628,6 +666,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Cálido", "Compartir", "Especial"],
     price: 33000,
     distanceKm: 2.7,
+    lat: -34.5867,
+    lng: -58.4391,
     rating: 4.4,
     reviews: 1000,
     comfortScore: 7,
@@ -659,6 +699,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Romántico", "Especial", "Lindo"],
     price: 36000,
     distanceKm: 5.2,
+    lat: -34.6196,
+    lng: -58.373,
     rating: 4.5,
     reviews: 500,
     comfortScore: 5,
@@ -690,6 +732,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Visual", "Especial", "Tranquilo"],
     price: 38000,
     distanceKm: 2.5,
+    lat: -34.5966,
+    lng: -58.4295,
     rating: 4.4,
     reviews: 1200,
     comfortScore: 5,
@@ -721,6 +765,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Tranquilo", "Visual"],
     price: 16000,
     distanceKm: 3.2,
+    lat: -34.5663,
+    lng: -58.456,
     rating: 4.4,
     reviews: 1400,
     comfortScore: 8,
@@ -749,9 +795,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "En plena avenida Corrientes, dentro del circuito más clásico de pizza porteña",
     planFit: ["Con amigos", "Algo rápido", "No sé todavía"],
-    vibeTags: ["Compartir", "Relajado", "Social"],
+    vibeTags: ["Compartir", "Tranquilo", "Social"],
     price: 21000,
     distanceKm: 6.1,
+    lat: -34.6041,
+    lng: -58.3884,
     rating: 4.5,
     reviews: 5000,
     comfortScore: 9,
@@ -780,9 +828,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "En pleno corazón de Palermo, con buena circulación y fácil acceso",
     planFit: ["Con amigos", "Cita", "Algo rápido", "No sé todavía"],
-    vibeTags: ["Visual", "Lindo", "Relajado"],
+    vibeTags: ["Visual", "Lindo", "Tranquilo"],
     price: 28000,
     distanceKm: 1.8,
+    lat: -34.5934,
+    lng: -58.4143,
     rating: 4.5,
     reviews: 1100,
     comfortScore: 8,
@@ -811,6 +861,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Tranquilo", "Lindo", "Especial"],
     price: 34000,
     distanceKm: 3.4,
+    lat: -34.568,
+    lng: -58.4538,
     rating: 4.6,
     reviews: 870,
     comfortScore: 7,
@@ -839,6 +891,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Cálido", "Especial", "Social"],
     price: 38000,
     distanceKm: 1.9,
+    lat: -34.596,
+    lng: -58.3862,
     rating: 4.7,
     reviews: 2100,
     comfortScore: 8,
@@ -864,9 +918,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: true,
     neighborhoodNote: "Muy elegido para el circuito gastronómico informal de Palermo",
     planFit: ["Con amigos", "Algo rápido", "No sé todavía"],
-    vibeTags: ["Divertido", "Social", "Relajado"],
+    vibeTags: ["Divertido", "Social", "Tranquilo"],
     price: 22000,
     distanceKm: 2.1,
+    lat: -34.5894,
+    lng: -58.4296,
     rating: 4.6,
     reviews: 1800,
     comfortScore: 8,
@@ -892,9 +948,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "Zona Palermo Hollywood, muy elegida para salidas informales",
     planFit: ["Algo rápido", "Con amigos", "No sé todavía"],
-    vibeTags: ["Relajado", "Divertido", "Social"],
+    vibeTags: ["Tranquilo", "Divertido", "Social"],
     price: 16000,
     distanceKm: 2.4,
+    lat: -34.5916,
+    lng: -58.4291,
     rating: 4.5,
     reviews: 2200,
     comfortScore: 9,
@@ -923,6 +981,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Visual", "Especial"],
     price: 30000,
     distanceKm: 2.2,
+    lat: -34.5888,
+    lng: -58.4266,
     rating: 4.7,
     reviews: 950,
     comfortScore: 8,
@@ -951,6 +1011,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Tranquilo", "Visual", "Lindo"],
     price: 24000,
     distanceKm: 3.1,
+    lat: -34.5985,
+    lng: -58.446,
     rating: 4.4,
     reviews: 640,
     comfortScore: 7,
@@ -979,6 +1041,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Divertido", "Social", "Especial"],
     price: 29000,
     distanceKm: 3.6,
+    lat: -34.5981,
+    lng: -58.4558,
     rating: 4.5,
     reviews: 520,
     comfortScore: 7,
@@ -1007,6 +1071,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Tranquilo", "Lindo", "Romántico"],
     price: 14000,
     distanceKm: 5.8,
+    lat: -34.6185,
+    lng: -58.3713,
     rating: 4.5,
     reviews: 1600,
     comfortScore: 8,
@@ -1035,6 +1101,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Lindo", "Visual", "Tranquilo"],
     price: 18000,
     distanceKm: 2.2,
+    lat: -34.5794,
+    lng: -58.3998,
     rating: 4.5,
     reviews: 1100,
     comfortScore: 8,
@@ -1063,6 +1131,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Especial", "Cálido", "Social"],
     price: 27000,
     distanceKm: 2.6,
+    lat: -34.5855,
+    lng: -58.4419,
     rating: 4.4,
     reviews: 480,
     comfortScore: 7,
@@ -1088,9 +1158,11 @@ export const restaurants: Restaurant[] = [
     acceptsReservations: false,
     neighborhoodNote: "Zona muy activa de Palermo, con mucho tránsito de jóvenes",
     planFit: ["Con amigos", "Algo rápido", "No sé todavía"],
-    vibeTags: ["Divertido", "Relajado", "Social"],
+    vibeTags: ["Divertido", "Tranquilo", "Social"],
     price: 19000,
     distanceKm: 1.7,
+    lat: -34.5826,
+    lng: -58.4358,
     rating: 4.4,
     reviews: 930,
     comfortScore: 8,
@@ -1119,6 +1191,8 @@ export const restaurants: Restaurant[] = [
     vibeTags: ["Social", "Divertido", "Especial"],
     price: 18000,
     distanceKm: 4.2,
+    lat: -34.5877,
+    lng: -58.4717,
     rating: 4.4,
     reviews: 720,
     comfortScore: 7,
@@ -1142,4 +1216,108 @@ export function formatPrice(price: number) {
 
 export function formatDistance(distanceKm: number) {
   return `${distanceKm.toFixed(1)} km`;
+}
+
+export const neighborhoodCenters = {
+  Palermo: { lat: -34.5886, lng: -58.4325 },
+  Recoleta: { lat: -34.5878, lng: -58.3985 },
+  Belgrano: { lat: -34.5627, lng: -58.4565 },
+  Chacarita: { lat: -34.5877, lng: -58.465 },
+  "Villa Crespo": { lat: -34.5975, lng: -58.449 },
+  Colegiales: { lat: -34.5738, lng: -58.445 },
+  "San Telmo": { lat: -34.6185, lng: -58.371 },
+  Almagro: { lat: -34.606, lng: -58.4236 },
+  Caballito: { lat: -34.6171, lng: -58.442 },
+  "Puerto Madero": { lat: -34.6155, lng: -58.3629 },
+  Centro: { lat: -34.6083, lng: -58.379 },
+  Retiro: { lat: -34.5883, lng: -58.3756 },
+  Monserrat: { lat: -34.6145, lng: -58.378 },
+  Boedo: { lat: -34.628, lng: -58.414 },
+  Flores: { lat: -34.6316, lng: -58.46 },
+  "Villa Urquiza": { lat: -34.5703, lng: -58.485 },
+  "Núñez": { lat: -34.5453, lng: -58.4546 },
+  Saavedra: { lat: -34.5521, lng: -58.4803 },
+  Coghlan: { lat: -34.5618, lng: -58.4797 },
+  "La Boca": { lat: -34.6352, lng: -58.363 },
+} as const;
+
+export type NeighborhoodName = keyof typeof neighborhoodCenters;
+
+/** Haversine: distancia en km entre dos coordenadas GPS */
+export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+export function getNearestNeighborhoodLabel(lat: number, lng: number) {
+  let bestMatch: NeighborhoodName = "Palermo";
+  let bestDistance = Infinity;
+
+  for (const [name, coords] of Object.entries(neighborhoodCenters) as [
+    NeighborhoodName,
+    (typeof neighborhoodCenters)[NeighborhoodName],
+  ][]) {
+    const distance = haversineKm(lat, lng, coords.lat, coords.lng);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestMatch = name;
+    }
+  }
+
+  return `${bestMatch}, CABA`;
+}
+
+export function getReferenceCoordinates(zone?: string) {
+  if (!zone) {
+    return null;
+  }
+
+  return neighborhoodCenters[zone as NeighborhoodName] ?? null;
+}
+
+export function getRestaurantDistanceKm(
+  restaurant: Pick<Restaurant, "lat" | "lng" | "distanceKm">,
+  reference?: {
+    userLat?: number;
+    userLng?: number;
+    zone?: string;
+  },
+) {
+  if (
+    typeof reference?.userLat === "number" &&
+    typeof reference?.userLng === "number"
+  ) {
+    return haversineKm(reference.userLat, reference.userLng, restaurant.lat, restaurant.lng);
+  }
+
+  const zoneCoordinates = getReferenceCoordinates(reference?.zone);
+  if (zoneCoordinates) {
+    return haversineKm(zoneCoordinates.lat, zoneCoordinates.lng, restaurant.lat, restaurant.lng);
+  }
+
+  return restaurant.distanceKm;
+}
+
+/** Límites aproximados de CABA para validar que el usuario está dentro */
+export const CABA_BOUNDS = {
+  latMin: -34.706,
+  latMax: -34.527,
+  lngMin: -58.531,
+  lngMax: -58.335,
+};
+
+export function isWithinCABA(lat: number, lng: number): boolean {
+  return (
+    lat >= CABA_BOUNDS.latMin &&
+    lat <= CABA_BOUNDS.latMax &&
+    lng >= CABA_BOUNDS.lngMin &&
+    lng <= CABA_BOUNDS.lngMax
+  );
 }

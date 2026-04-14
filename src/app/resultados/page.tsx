@@ -2,10 +2,13 @@ import Link from "next/link";
 
 import AppNavigation from "@/components/AppNavigation";
 import FavoriteButton from "@/components/FavoriteButton";
+import TrackRestaurantLink from "@/components/TrackRestaurantLink";
+import SearchSessionSync from "@/components/SearchSessionSync";
 import ShareButton from "@/components/ShareButton";
 import {
   formatDistance,
   formatPrice,
+  getRestaurantDistanceKm,
   restaurants,
 } from "@/data/restaurants";
 
@@ -16,6 +19,9 @@ type SearchParams = Promise<{
   vibe?: string;
   budget?: string;
   distance?: string;
+  userLat?: string;
+  userLng?: string;
+  userLabel?: string;
 }>;
 
 function getResultBadge(index: number, restaurant: { rating: number; distanceKm: number; discoveryScore: number; momentumScore: number }, cuisine: string): string {
@@ -76,7 +82,7 @@ function cuisineMatches(restaurantCuisine: string, selectedCuisine: string) {
 }
 
 function scoreRestaurant(
-  restaurant: (typeof restaurants)[number],
+  restaurant: (typeof restaurants)[number] & { distanceKm: number },
   filters: {
     plan: string;
     cuisine: string;
@@ -122,7 +128,7 @@ function scoreRestaurant(
 }
 
 function buildReason(
-  restaurant: (typeof restaurants)[number],
+  restaurant: (typeof restaurants)[number] & { distanceKm: number },
   filters: {
     plan: string;
     cuisine: string;
@@ -203,23 +209,54 @@ export default async function ResultadosPage({
       .filter(Boolean),
     budget: Number(params.budget ?? "28000"),
     distance: Number(params.distance ?? "6"),
+    userLat: params.userLat ? Number(params.userLat) : undefined,
+    userLng: params.userLng ? Number(params.userLng) : undefined,
+    userLabel: params.userLabel ?? undefined,
   };
+
+  const hasGpsReference =
+    Number.isFinite(filters.userLat) && Number.isFinite(filters.userLng);
+  const displayLocation = hasGpsReference
+    ? filters.userLabel ?? "Tu ubicación actual"
+    : filters.zone;
+  const locationZone = hasGpsReference
+    ? displayLocation.replace(", CABA", "")
+    : filters.zone;
+  const enrichedRestaurants = restaurants.map((restaurant) => ({
+    ...restaurant,
+    distanceKm: getRestaurantDistanceKm(restaurant, {
+      userLat: filters.userLat,
+      userLng: filters.userLng,
+      zone: hasGpsReference ? undefined : filters.zone,
+    }),
+  }));
 
   // Hard filter: excluir restaurantes fuera del radio elegido.
   // Si quedan menos de 3, completar con los más cercanos del dataset completo.
-  const withinDistance = restaurants.filter(
+  const withinDistance = enrichedRestaurants.filter(
     (r) => r.distanceKm <= filters.distance,
   );
   const candidatePool =
     withinDistance.length >= 3
       ? withinDistance
-      : [...restaurants].sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 3);
+      : [...enrichedRestaurants].sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 3);
+  const showDistanceFallbackNotice = candidatePool.some(
+    (restaurant) => restaurant.distanceKm > filters.distance,
+  );
 
-  const rankedRestaurants = [...candidatePool]
+  // Hard filter: excluir restaurantes que superen el presupuesto.
+  // Si quedan menos de 3, completar con los más baratos del pool de distancia.
+  const withinBudget = candidatePool.filter((r) => r.price <= filters.budget);
+  const budgetPool =
+    withinBudget.length >= 3
+      ? withinBudget
+      : [...candidatePool].sort((a, b) => a.price - b.price).slice(0, 3);
+
+  const rankedRestaurants = [...budgetPool]
     .map((restaurant) => ({
       ...restaurant,
-      score: scoreRestaurant(restaurant, filters),
-      dynamicReason: buildReason(restaurant, filters),
+      score: scoreRestaurant(restaurant, { ...filters, zone: locationZone }),
+      dynamicReason: buildReason(restaurant, { ...filters, zone: locationZone }),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
@@ -235,23 +272,47 @@ export default async function ResultadosPage({
     filters.cuisine !== "Sorprendeme" &&
     !hasExactCuisineMatch;
 
+  // Detectar si algún resultado supera el presupuesto (por fallback de presupuesto)
+  const showBudgetFallbackNotice = rankedRestaurants.some(
+    (r) => r.price > filters.budget,
+  );
+
   const filterParams = new URLSearchParams({
     plan: filters.plan,
     cuisine: filters.cuisine,
-    zone: filters.zone,
     vibe: filters.vibes.join(","),
     budget: String(filters.budget),
     distance: String(filters.distance),
+    ...(hasGpsReference
+      ? {
+          userLat: String(filters.userLat),
+          userLng: String(filters.userLng),
+          userLabel: displayLocation,
+        }
+      : { zone: filters.zone }),
   }).toString();
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,_#fffaf4_0%,_#fff4e8_100%)] px-4 py-4 pb-28 text-stone-900 sm:px-10 sm:py-6 md:pb-0 lg:px-12">
+      <SearchSessionSync
+        params={filterParams}
+        payload={{
+          plan: filters.plan,
+          cuisine: filters.cuisine,
+          zone: filters.zone,
+          budget: filters.budget,
+          distance: filters.distance,
+          vibes: filters.vibes,
+          userLabel: filters.userLabel,
+          userLat: filters.userLat,
+          userLng: filters.userLng,
+          selectedResults: rankedRestaurants.map((restaurant) => restaurant.slug),
+        }}
+      />
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col">
         <header className="flex items-center justify-between">
           <Link
-            href={`/preferencias?plan=${encodeURIComponent(
-              filters.plan,
-            )}&cuisine=${encodeURIComponent(filters.cuisine)}`}
+            href={`/preferencias?${filterParams}`}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ead7c9] bg-white/90 text-lg text-stone-700 shadow-[0_12px_35px_rgba(201,97,36,0.08)]"
             aria-label="Volver a filtros"
           >
@@ -290,7 +351,7 @@ export default async function ResultadosPage({
                 {[
                   filters.plan,
                   filters.cuisine,
-                  filters.zone,
+                  displayLocation,
                   ...(filters.vibes.length > 0 ? filters.vibes : []),
                   `$${filters.budget.toLocaleString("es-AR")}`,
                   `${filters.distance} km`,
@@ -310,7 +371,25 @@ export default async function ResultadosPage({
             <div className="rounded-[22px] border border-[#f0dccd] bg-white/88 px-4 py-3 shadow-[0_8px_24px_rgba(201,97,36,0.08)]">
               <p className="text-sm leading-6 text-stone-600">
                 <span className="font-semibold text-stone-800">No encontramos {filters.cuisine} cerca.</span>{" "}
-                Te mostramos las mejores opciones disponibles según tu plan, zona y presupuesto.
+                Te mostramos las mejores opciones disponibles según tu plan, ubicación y presupuesto.
+              </p>
+            </div>
+          )}
+
+          {showDistanceFallbackNotice && (
+            <div className="rounded-[22px] border border-[#f7d9c5] bg-[#fff7f1] px-4 py-3 shadow-[0_8px_24px_rgba(201,97,36,0.08)]">
+              <p className="text-sm leading-6 text-stone-600">
+                <span className="font-semibold text-stone-800">No encontramos suficientes opciones dentro de tu radio de {filters.distance} km.</span>{" "}
+                Sumamos algunas alternativas cercanas, aunque queden un poco más lejos de {displayLocation}.
+              </p>
+            </div>
+          )}
+
+          {showBudgetFallbackNotice && (
+            <div className="rounded-[22px] border border-[#f0dccd] bg-white/88 px-4 py-3 shadow-[0_8px_24px_rgba(201,97,36,0.08)]">
+              <p className="text-sm leading-6 text-stone-600">
+                <span className="font-semibold text-stone-800">No hay suficientes opciones dentro de tu presupuesto.</span>{" "}
+                Incluimos los más accesibles disponibles cerca de {displayLocation}.
               </p>
             </div>
           )}
@@ -430,14 +509,16 @@ export default async function ResultadosPage({
                         text={`Mirá este lugar: ${restaurant.name} en ${restaurant.zone}.`}
                         url={`/restaurant/${restaurant.slug}?${filterParams}`}
                         label="Compartir"
+                        restaurantSlug={restaurant.slug}
                       />
                     </div>
-                    <Link
+                    <TrackRestaurantLink
                       href={`/restaurant/${restaurant.slug}?${filterParams}`}
+                      restaurantSlug={restaurant.slug}
                       className="rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.25)]"
                     >
                       Ver detalle
-                    </Link>
+                    </TrackRestaurantLink>
                   </div>
                 </div>
               </article>
@@ -447,7 +528,7 @@ export default async function ResultadosPage({
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             <ShareButton
               title="Mi shortlist de restaurantes"
-              text={`Te paso estas opciones para ${filters.plan.toLowerCase()} en ${filters.zone}.`}
+              text={`Te paso estas opciones para ${filters.plan.toLowerCase()} cerca de ${displayLocation}.`}
               url={`/resultados?${filterParams}`}
               label="Compartir shortlist"
             />
