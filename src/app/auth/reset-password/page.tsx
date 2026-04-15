@@ -5,29 +5,41 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
+type Status = "loading" | "ready" | "error" | "success";
+
 export default function ResetPasswordPage() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
+  const [status, setStatus] = useState<Status>("loading");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
 
-  // Supabase maneja el intercambio del code automáticamente via onAuthStateChange
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setReady(true);
-      }
-    });
+    // El link de Supabase llega con ?code=xxx en la URL
+    const code = new URLSearchParams(window.location.search).get("code");
 
-    // También chequeamos si ya hay sesión activa (por si el evento ya ocurrió)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setReady(true);
-    });
-
-    return () => subscription.unsubscribe();
+    if (code) {
+      supabase.auth
+        .exchangeCodeForSession(code)
+        .then(({ error }) => {
+          if (error) {
+            setStatus("error");
+          } else {
+            setStatus("ready");
+          }
+        });
+    } else {
+      // Sin code: puede que la sesión ya esté activa (PASSWORD_RECOVERY via hash)
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setStatus("ready");
+        } else {
+          setStatus("error");
+        }
+      });
+    }
   }, [supabase]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -37,7 +49,7 @@ export default function ResetPasswordPage() {
       return;
     }
     if (password.length < 6) {
-      setErrorMsg("La contraseña debe tener al menos 6 caracteres.");
+      setErrorMsg("Mínimo 6 caracteres.");
       return;
     }
     setSubmitting(true);
@@ -47,8 +59,11 @@ export default function ResetPasswordPage() {
     if (error) {
       setErrorMsg("No se pudo actualizar la contraseña. Intentá de nuevo.");
     } else {
-      router.push("/");
-      router.refresh();
+      setStatus("success");
+      setTimeout(() => {
+        router.push("/");
+        router.refresh();
+      }, 1500);
     }
   }
 
@@ -68,13 +83,36 @@ export default function ResetPasswordPage() {
         </p>
       </div>
 
-      {/* Formulario */}
+      {/* Contenido */}
       <div className="flex flex-1 flex-col justify-center px-6 pt-16 pb-10">
-        {!ready ? (
-          <div className="text-center space-y-4">
-            <p className="text-stone-500 text-sm">Verificando enlace...</p>
+        {status === "loading" && (
+          <p className="text-center text-sm text-stone-400">Verificando enlace...</p>
+        )}
+
+        {status === "error" && (
+          <div className="text-center space-y-5">
+            <p className="text-xl font-semibold text-stone-900">Link inválido o expirado</p>
+            <p className="text-sm text-stone-500 leading-6">
+              Este link ya fue usado o expiró. Pedí uno nuevo desde la pantalla de inicio de sesión.
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push("/auth")}
+              className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(242,122,63,0.3)]"
+            >
+              Volver al inicio
+            </button>
           </div>
-        ) : (
+        )}
+
+        {status === "success" && (
+          <div className="text-center space-y-3">
+            <p className="text-xl font-semibold text-stone-900">Contraseña actualizada</p>
+            <p className="text-sm text-stone-500">Entrando a la app...</p>
+          </div>
+        )}
+
+        {status === "ready" && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
               <p className="text-xl font-semibold text-stone-900">Crear nueva contraseña</p>
