@@ -2,20 +2,29 @@ import AuthForm from "./AuthForm";
 
 export default function AuthPage() {
   return (
-    <main className="min-h-screen bg-[#fffaf4] flex flex-col px-5">
-      {/* Logo */}
-      <div className="pt-28 pb-10 text-center">
-        <span className="text-5xl font-bold tracking-[-0.04em] text-stone-900">
-          Don<span className="text-[#f27a3f]">dy</span>
+    <main className="min-h-screen flex flex-col bg-white">
+
+      {/* Bloque superior — color de marca */}
+      <div className="relative flex flex-col items-center justify-center bg-[#f27a3f] px-6 pt-20 pb-16">
+        {/* Círculo decorativo de fondo */}
+        <div className="absolute bottom-0 left-1/2 h-24 w-[140%] -translate-x-1/2 translate-y-1/2 rounded-[50%] bg-white" />
+
+        {/* Logo */}
+        <span className="relative text-6xl font-bold tracking-[-0.04em] text-white">
+          Don<span className="text-white/70">dy</span>
         </span>
+
+        {/* Tagline */}
+        <p className="relative mt-3 text-base font-medium text-white/80">
+          Encontrá dónde comer, ya.
+        </p>
       </div>
 
-      {/* Formulario centrado en el espacio restante */}
-      <div className="flex flex-1 items-center justify-center pb-10">
-        <div className="w-full max-w-sm">
-          <AuthForm />
-        </div>
+      {/* Bloque inferior — formulario */}
+      <div className="flex flex-1 flex-col justify-center px-6 pt-12 pb-10">
+        <AuthForm />
       </div>
+
     </main>
   );
 }

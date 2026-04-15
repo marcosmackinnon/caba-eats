@@ -39,28 +39,31 @@ export default function AuthForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setSubmitting(false);
     if (error) {
-      if (error.message.toLowerCase().includes("email not confirmed")) {
-        setErrorMsg("Confirmá tu email antes de ingresar. Revisá tu casilla.");
-      } else {
-        setErrorMsg("Email o contraseña incorrectos.");
-      }
+      setErrorMsg(
+        error.message.toLowerCase().includes("email not confirmed")
+          ? "Confirmá tu email antes de ingresar."
+          : "Email o contraseña incorrectos."
+      );
       return;
     }
     router.push("/");
     router.refresh();
   }
 
+  // Pantalla post-registro
   if (step === "check-email") {
     return (
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-5">
         <p className="text-xl font-semibold text-stone-900">Revisá tu casilla</p>
         <p className="text-sm text-stone-500 leading-6">
-          Te enviamos un link a <span className="text-stone-700 font-medium">{email}</span> para confirmar tu cuenta.
+          Te enviamos un link a{" "}
+          <span className="font-medium text-stone-700">{email}</span>{" "}
+          para confirmar tu cuenta.
         </p>
         <button
           type="button"
           onClick={() => { setMode("login"); setStep("form"); }}
-          className="mt-2 w-full rounded-full bg-[#f27a3f] py-3.5 text-sm font-semibold text-white"
+          className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white"
         >
           Ya confirmé, ingresar
         </button>
@@ -69,23 +72,14 @@ export default function AuthForm() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Título dinámico */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-          {mode === "register" ? "Crear cuenta" : "Iniciar sesión"}
-        </h1>
-        {mode === "register" && (
-          <p className="mt-1.5 text-sm text-stone-400">Solo la primera vez.</p>
-        )}
-      </div>
+    <div className="space-y-6">
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-full bg-stone-100 p-1">
+      <div className="flex gap-1 rounded-2xl bg-stone-100 p-1">
         <button
           type="button"
           onClick={() => { setMode("register"); setErrorMsg(null); }}
-          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
+          className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             mode === "register" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
         >
@@ -94,7 +88,7 @@ export default function AuthForm() {
         <button
           type="button"
           onClick={() => { setMode("login"); setErrorMsg(null); }}
-          className={`flex-1 rounded-full py-2.5 text-sm font-medium transition-all ${
+          className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             mode === "login" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
         >
@@ -102,15 +96,15 @@ export default function AuthForm() {
         </button>
       </div>
 
-      {/* Formulario */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Campos */}
+      <form onSubmit={handleSubmit} className="space-y-3">
         {mode === "register" && (
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Nombre"
-            className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+            className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] focus:bg-white placeholder:text-stone-400 transition"
           />
         )}
         <input
@@ -119,7 +113,7 @@ export default function AuthForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="Email"
-          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+          className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] focus:bg-white placeholder:text-stone-400 transition"
         />
         <input
           type="password"
@@ -128,21 +122,29 @@ export default function AuthForm() {
           required
           minLength={6}
           placeholder="Contraseña"
-          className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] placeholder:text-stone-400"
+          className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] focus:bg-white placeholder:text-stone-400 transition"
         />
 
         {errorMsg && (
-          <p className="text-xs text-red-500 px-1">{errorMsg}</p>
+          <p className="text-xs text-red-500 px-1 pt-1">{errorMsg}</p>
         )}
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-full bg-[#f27a3f] py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(242,122,63,0.25)] disabled:opacity-50 mt-1"
+          className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(242,122,63,0.3)] disabled:opacity-50 mt-2"
         >
-          {submitting ? "Procesando..." : mode === "register" ? "Crear cuenta" : "Ingresar"}
+          {submitting
+            ? "Procesando..."
+            : mode === "register" ? "Crear cuenta" : "Ingresar"}
         </button>
       </form>
+
+      {mode === "register" && (
+        <p className="text-center text-xs text-stone-400">
+          Solo necesitás registrarte una vez.
+        </p>
+      )}
     </div>
   );
 }
