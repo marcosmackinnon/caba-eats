@@ -18,11 +18,15 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(false);
+  const [resendMsg, setResendMsg] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
     setErrorMsg(null);
+    setNeedsConfirmation(false);
 
     if (mode === "register") {
       const { error } = await supabase.auth.signUp({
@@ -39,15 +43,30 @@ export default function AuthForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setSubmitting(false);
     if (error) {
-      setErrorMsg(
-        error.message.toLowerCase().includes("email not confirmed")
-          ? "Confirmá tu email antes de ingresar."
-          : "Email o contraseña incorrectos."
-      );
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        setNeedsConfirmation(true);
+        setErrorMsg("Todavía no confirmaste tu email.");
+      } else {
+        setErrorMsg("Email o contraseña incorrectos.");
+      }
       return;
     }
     router.push("/");
     router.refresh();
+  }
+
+  async function handleResend() {
+    if (resendCooldown || !email) return;
+    setResendCooldown(true);
+    setResendMsg(null);
+    const { error } = await supabase.auth.resend({ type: "signup", email });
+    if (error) {
+      setResendMsg("No se pudo reenviar. Intentá de nuevo en unos minutos.");
+    } else {
+      setResendMsg("Email reenviado. Revisá tu casilla.");
+    }
+    // cooldown de 60 segundos
+    setTimeout(() => setResendCooldown(false), 60000);
   }
 
   // Pantalla post-registro
@@ -57,15 +76,26 @@ export default function AuthForm() {
         <p className="text-xl font-semibold text-stone-900">Revisá tu casilla</p>
         <p className="text-sm text-stone-500 leading-6">
           Te enviamos un link a{" "}
-          <span className="font-medium text-stone-700">{email}</span>{" "}
-          para confirmar tu cuenta.
+          <span className="font-medium text-stone-700">{email}</span>.
+          Tenés 1 hora para confirmarlo antes de que expire.
         </p>
+        {resendMsg && (
+          <p className="text-xs text-stone-500">{resendMsg}</p>
+        )}
         <button
           type="button"
           onClick={() => { setMode("login"); setStep("form"); }}
           className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white"
         >
           Ya confirmé, ingresar
+        </button>
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resendCooldown}
+          className="w-full rounded-2xl border border-stone-200 py-3.5 text-sm font-medium text-stone-500 disabled:opacity-40"
+        >
+          {resendCooldown ? "Email enviado" : "Reenviar email de confirmación"}
         </button>
       </div>
     );
@@ -78,7 +108,7 @@ export default function AuthForm() {
       <div className="flex gap-1 rounded-2xl bg-stone-100 p-1">
         <button
           type="button"
-          onClick={() => { setMode("register"); setErrorMsg(null); }}
+          onClick={() => { setMode("register"); setErrorMsg(null); setNeedsConfirmation(false); }}
           className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             mode === "register" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
@@ -87,7 +117,7 @@ export default function AuthForm() {
         </button>
         <button
           type="button"
-          onClick={() => { setMode("login"); setErrorMsg(null); }}
+          onClick={() => { setMode("login"); setErrorMsg(null); setNeedsConfirmation(false); }}
           className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             mode === "login" ? "bg-white text-stone-900 shadow-sm" : "text-stone-400"
           }`}
@@ -126,7 +156,22 @@ export default function AuthForm() {
         />
 
         {errorMsg && (
-          <p className="text-xs text-red-500 px-1 pt-1">{errorMsg}</p>
+          <div className="space-y-2">
+            <p className="text-xs text-red-500 px-1">{errorMsg}</p>
+            {needsConfirmation && email && (
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendCooldown}
+                className="text-xs font-medium text-[#f27a3f] underline underline-offset-2 disabled:opacity-40"
+              >
+                {resendCooldown ? "Email enviado" : "Reenviar email de confirmación"}
+              </button>
+            )}
+            {resendMsg && (
+              <p className="text-xs text-stone-500 px-1">{resendMsg}</p>
+            )}
+          </div>
         )}
 
         <button
@@ -134,9 +179,7 @@ export default function AuthForm() {
           disabled={submitting}
           className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(242,122,63,0.3)] disabled:opacity-50 mt-2"
         >
-          {submitting
-            ? "Procesando..."
-            : mode === "register" ? "Crear cuenta" : "Ingresar"}
+          {submitting ? "Procesando..." : mode === "register" ? "Crear cuenta" : "Ingresar"}
         </button>
       </form>
 

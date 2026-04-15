@@ -2,12 +2,12 @@ import AuthForm from "./AuthForm";
 
 export default function AuthPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-white">
+    <main className="min-h-screen flex flex-col bg-[#fffaf4]">
 
       {/* Bloque superior — color de marca */}
       <div className="relative flex flex-col items-center justify-center bg-[#f27a3f] px-6 pt-24 pb-24">
         {/* Curva inferior */}
-        <div className="absolute bottom-0 left-1/2 h-28 w-[150%] -translate-x-1/2 translate-y-1/2 rounded-[50%] bg-white" />
+        <div className="absolute bottom-0 left-1/2 h-28 w-[150%] -translate-x-1/2 translate-y-1/2 rounded-[50%] bg-[#fffaf4]" />
 
         {/* Logo */}
         <span
