@@ -4,24 +4,27 @@ import AppNavigation from "@/components/AppNavigation";
 import { restaurants } from "@/data/restaurants";
 import { trendingSpot } from "@/data/trending";
 
-export default function Home({
+export default async function Home({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  // En Next.js 15+, searchParams es una Promise y hay que awaitarla
+  const params = await searchParams;
+
   // Supabase redirige acá con ?code= cuando el redirectTo no funciona correctamente.
   // Lo mandamos a /auth/reset-password para que procese el código.
-  const code = searchParams?.code;
+  const code = params?.code;
   if (code && typeof code === "string") {
     redirect(`/auth/reset-password?code=${code}`);
   }
 
   // Supabase redirige acá cuando el link expiró o hubo error de auth.
-  const errorCode = searchParams?.error_code;
+  const errorCode = params?.error_code;
   if (errorCode === "otp_expired") {
     redirect("/auth?error=link_expired");
   }
-  if (searchParams?.error === "access_denied") {
+  if (params?.error === "access_denied") {
     redirect("/auth?error=access_denied");
   }
   const trendingRestaurant =
