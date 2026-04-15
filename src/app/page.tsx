@@ -1,9 +1,23 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppNavigation from "@/components/AppNavigation";
 import { restaurants } from "@/data/restaurants";
 import { trendingSpot } from "@/data/trending";
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
+  // Supabase redirige acá cuando el link expiró o hubo error de auth.
+  // Lo reenviamos a /auth con un mensaje claro.
+  const errorCode = searchParams?.error_code;
+  if (errorCode === "otp_expired") {
+    redirect("/auth?error=link_expired");
+  }
+  if (searchParams?.error === "access_denied") {
+    redirect("/auth?error=access_denied");
+  }
   const trendingRestaurant =
     restaurants.find(
       (restaurant) => restaurant.slug === trendingSpot.restaurantSlug,

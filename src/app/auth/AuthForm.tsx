@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useMemo, useState, useEffect } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,6 +10,7 @@ type Step = "form" | "check-email" | "forgot" | "forgot-sent";
 
 export default function AuthForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [mode, setMode] = useState<Mode>("register");
   const [step, setStep] = useState<Step>("form");
@@ -21,6 +22,21 @@ export default function AuthForm() {
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(false);
   const [resendMsg, setResendMsg] = useState<string | null>(null);
+
+  // Mostrar mensaje si Supabase redirigió acá con error (ej: link expirado)
+  useEffect(() => {
+    const error = searchParams?.get("error");
+    if (error === "link_expired") {
+      setMode("login");
+      setErrorMsg("El link expiró. Pedí uno nuevo desde '¿Olvidaste tu contraseña?'.");
+    } else if (error === "access_denied") {
+      setMode("login");
+      setErrorMsg("El link ya fue usado o no es válido. Pedí uno nuevo.");
+    } else if (error === "confirmation_failed") {
+      setMode("login");
+      setErrorMsg("El link de confirmación expiró. Intentá reenviar el email.");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
