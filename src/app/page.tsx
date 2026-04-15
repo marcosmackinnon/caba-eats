@@ -9,8 +9,14 @@ export default function Home({
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
+  // Supabase redirige acá con ?code= cuando el redirectTo no funciona correctamente.
+  // Lo mandamos a /auth/reset-password para que procese el código.
+  const code = searchParams?.code;
+  if (code && typeof code === "string") {
+    redirect(`/auth/reset-password?code=${code}`);
+  }
+
   // Supabase redirige acá cuando el link expiró o hubo error de auth.
-  // Lo reenviamos a /auth con un mensaje claro.
   const errorCode = searchParams?.error_code;
   if (errorCode === "otp_expired") {
     redirect("/auth?error=link_expired");
