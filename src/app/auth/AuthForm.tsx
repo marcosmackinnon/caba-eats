@@ -6,7 +6,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Mode = "login" | "register";
-type Step = "form" | "check-email";
+type Step = "form" | "check-email" | "forgot" | "forgot-sent";
 
 export default function AuthForm() {
   const router = useRouter();
@@ -55,6 +55,21 @@ export default function AuthForm() {
     router.refresh();
   }
 
+  async function handleForgotPassword() {
+    if (!email) { setErrorMsg("Ingresá tu email primero."); return; }
+    setSubmitting(true);
+    setErrorMsg(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    setSubmitting(false);
+    if (error) {
+      setErrorMsg("No se pudo enviar el email. Intentá de nuevo.");
+    } else {
+      setStep("forgot-sent");
+    }
+  }
+
   async function handleResend() {
     if (resendCooldown || !email) return;
     setResendCooldown(true);
@@ -96,6 +111,64 @@ export default function AuthForm() {
           className="w-full rounded-2xl border border-stone-200 py-3.5 text-sm font-medium text-stone-500 disabled:opacity-40"
         >
           {resendCooldown ? "Email enviado" : "Reenviar email de confirmación"}
+        </button>
+      </div>
+    );
+  }
+
+  // Pantalla "ingresá tu email para recuperar contraseña"
+  if (step === "forgot") {
+    return (
+      <div className="space-y-5">
+        <div className="space-y-1">
+          <p className="text-xl font-semibold text-stone-900">Recuperar contraseña</p>
+          <p className="text-sm text-stone-500">
+            Te enviamos un link para crear una nueva.
+          </p>
+        </div>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Tu email"
+          className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] focus:bg-white placeholder:text-stone-400 transition"
+        />
+        {errorMsg && <p className="text-xs text-red-500 px-1">{errorMsg}</p>}
+        <button
+          type="button"
+          onClick={handleForgotPassword}
+          disabled={submitting || !email}
+          className="w-full rounded-2xl bg-[#f27a3f] py-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(242,122,63,0.3)] disabled:opacity-50"
+        >
+          {submitting ? "Enviando..." : "Enviar link de recuperación"}
+        </button>
+        <button
+          type="button"
+          onClick={() => { setStep("form"); setErrorMsg(null); }}
+          className="w-full text-sm text-stone-400 py-2"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
+  // Pantalla post-forgot
+  if (step === "forgot-sent") {
+    return (
+      <div className="text-center space-y-5">
+        <p className="text-xl font-semibold text-stone-900">Revisá tu casilla</p>
+        <p className="text-sm text-stone-500 leading-6">
+          Te enviamos un link a{" "}
+          <span className="font-medium text-stone-700">{email}</span>.
+          Hacé clic en él para crear una nueva contraseña.
+        </p>
+        <button
+          type="button"
+          onClick={() => { setStep("form"); setMode("login"); setErrorMsg(null); }}
+          className="w-full rounded-2xl border border-stone-200 py-3.5 text-sm font-medium text-stone-500"
+        >
+          Volver al inicio de sesión
         </button>
       </div>
     );
@@ -154,6 +227,18 @@ export default function AuthForm() {
           placeholder="Contraseña"
           className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-800 outline-none focus:border-[#f27a3f] focus:bg-white placeholder:text-stone-400 transition"
         />
+
+        {mode === "login" && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => { setStep("forgot"); setErrorMsg(null); }}
+              className="text-xs text-stone-400 hover:text-[#f27a3f] transition-colors"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+        )}
 
         {errorMsg && (
           <div className="space-y-2">
