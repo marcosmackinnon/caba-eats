@@ -2,7 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rutas que NO requieren autenticación
-const PUBLIC_PATHS = ["/auth"];
+// El flujo principal de la app es público (sin login).
+// En el futuro, solo reseñas y perfil requerirán auth.
+const PUBLIC_PATHS = [
+  "/auth",
+  "/",
+  "/plan",
+  "/comida",
+  "/preferencias",
+  "/resultados",
+  "/restaurant",
+  "/favoritos",
+];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

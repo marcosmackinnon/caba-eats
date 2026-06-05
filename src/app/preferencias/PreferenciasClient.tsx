@@ -139,6 +139,8 @@ export default function PreferenciasClient({
     router.push(`/resultados?${params.toString()}`);
   }
 
+  const isQuickMode = selectedPlan === "Algo rápido";
+
   const locationLabel =
     location.type === "gps"
       ? location.label
@@ -179,7 +181,7 @@ export default function PreferenciasClient({
                 <div className="flex items-center justify-between gap-4">
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/22 bg-white/14 px-3 py-2 text-sm font-medium text-white/90">
                     <span className="h-2 w-2 rounded-full bg-white" />
-                    Ajustemos la búsqueda
+                    {isQuickMode ? "Casi listo" : "Ajustemos la búsqueda"}
                   </div>
                   <span className="rounded-full bg-white/16 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/88">
                     Paso 3
@@ -187,10 +189,12 @@ export default function PreferenciasClient({
                 </div>
 
                 <h1 className="max-w-xl text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">
-                  Presupuesto, zona y estilo.
+                  {isQuickMode ? "Zona y presupuesto." : "Presupuesto, zona y estilo."}
                 </h1>
                 <p className="max-w-xl text-sm leading-6 text-white/82 sm:text-base sm:leading-7">
-                  Ajustá lo importante para que te devolvamos pocas opciones, pero mucho más precisas dentro de CABA.
+                  {isQuickMode
+                    ? "Elegiste algo rápido, así que solo necesitamos saber dónde estás y cuánto querés gastar."
+                    : "Ajustá lo importante para que te devolvamos pocas opciones, pero mucho más precisas dentro de CABA."}
                 </p>
 
                 <div className="flex flex-wrap gap-2">
@@ -368,44 +372,46 @@ export default function PreferenciasClient({
               )}
             </div>
 
-            {/* ── VIBRA ── */}
-            <fieldset className="space-y-3">
-              <legend className="text-sm font-semibold text-stone-700">
-                ¿Qué priorizás en el lugar?
-              </legend>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {vibeOptions.map((option) => {
-                  const isSelected = selectedVibes.includes(option);
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => toggleVibe(option)}
-                      className={`rounded-full px-3 py-2 text-sm font-medium transition sm:px-4 ${
-                        isSelected
-                          ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
-                          : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
-                      }`}
-                    >
-                      {option}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="flex justify-center pt-1">
-                <button
-                  type="button"
-                  onClick={activateAnyVibe}
-                  className={`min-w-40 rounded-full px-4 py-2 text-sm font-medium transition ${
-                    selectedVibes.length === 0
-                      ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
-                      : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
-                  }`}
-                >
-                  {anyVibeLabel}
-                </button>
-              </div>
-            </fieldset>
+            {/* ── VIBRA — se oculta en modo rápido ── */}
+            {!isQuickMode && (
+              <fieldset className="space-y-3">
+                <legend className="text-sm font-semibold text-stone-700">
+                  ¿Qué priorizás en el lugar?
+                </legend>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  {vibeOptions.map((option) => {
+                    const isSelected = selectedVibes.includes(option);
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => toggleVibe(option)}
+                        className={`rounded-full px-3 py-2 text-sm font-medium transition sm:px-4 ${
+                          isSelected
+                            ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
+                            : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-center pt-1">
+                  <button
+                    type="button"
+                    onClick={activateAnyVibe}
+                    className={`min-w-40 rounded-full px-4 py-2 text-sm font-medium transition ${
+                      selectedVibes.length === 0
+                        ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
+                        : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
+                    }`}
+                  >
+                    {anyVibeLabel}
+                  </button>
+                </div>
+              </fieldset>
+            )}
 
             <div className="flex flex-col gap-3 border-t border-[#f3e3d7] pt-4 sm:flex-row sm:pt-5">
               <Link
@@ -418,7 +424,7 @@ export default function PreferenciasClient({
                 type="submit"
                 className="rounded-full bg-[#f27a3f] px-6 py-3.5 text-base font-semibold text-white shadow-[0_18px_40px_rgba(242,122,63,0.25)]"
               >
-                Ver resultados
+                {isQuickMode ? "Ver opciones rápidas →" : "Ver resultados"}
               </button>
             </div>
           </form>

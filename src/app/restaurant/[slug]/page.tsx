@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import AppNavigation from "@/components/AppNavigation";
 import FavoriteButton from "@/components/FavoriteButton";
 import MenuSheet from "@/components/MenuSheet";
+import RestaurantPhoto from "@/components/RestaurantPhoto";
 import RestaurantViewTracker from "@/components/RestaurantViewTracker";
 import ShareButton from "@/components/ShareButton";
+import { getRestaurantPhotoUrl } from "@/data/photos";
 import {
   formatDistance,
   formatPrice,
@@ -100,22 +102,23 @@ export default async function RestaurantDetailPage({
         </header>
 
         <section className="space-y-6 py-6 sm:space-y-8 lg:py-12">
-          <div
-            className={`relative overflow-hidden rounded-[34px] ${restaurant.heroClassName} p-5 text-white shadow-[0_28px_80px_rgba(201,97,36,0.22)] sm:p-10`}
+          <RestaurantPhoto
+            src={getRestaurantPhotoUrl(restaurant.cuisine)}
+            alt={restaurant.name}
+            fallbackClassName={restaurant.heroClassName}
+            overlayClassName={restaurant.cardAccentClassName}
+            className="min-h-[200px] rounded-[34px] p-5 shadow-[0_28px_80px_rgba(201,97,36,0.22)] sm:min-h-[260px] sm:p-10"
           >
-            <div
-              className={`absolute inset-0 bg-gradient-to-t ${restaurant.cardAccentClassName}`}
-            />
             <div className="relative space-y-4 sm:max-w-3xl sm:space-y-5">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium backdrop-blur-sm">
+                <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm">
                   {restaurant.cuisine} · {restaurant.zone}
                 </span>
-                <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium backdrop-blur-sm">
+                <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm">
                   ★ {restaurant.rating} · {restaurant.reviews} reseñas
                 </span>
               </div>
-              <h1 className="text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-5xl">
+              <h1 className="text-4xl font-semibold leading-[0.98] tracking-[-0.05em] text-white sm:text-5xl">
                 {restaurant.name}
               </h1>
               <p className="max-w-xl text-base leading-7 text-white/85 sm:text-lg sm:leading-8">
@@ -125,7 +128,7 @@ export default async function RestaurantDetailPage({
                 {restaurant.imageLabel}
               </p>
             </div>
-          </div>
+          </RestaurantPhoto>
 
           <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
             <aside className="space-y-5 rounded-[30px] border border-[#f0dccd] bg-white p-4 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
@@ -233,24 +236,25 @@ export default async function RestaurantDetailPage({
             </aside>
 
             <div className="space-y-5">
+              {/* Por que aparece + Ideal para */}
               <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Por qué aparece
+                  Por qué lo recomendamos
                 </p>
                 <p className="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
                   {restaurant.reason}
                 </p>
+                <div className="mt-4 rounded-[18px] bg-[#fff8f2] px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
+                    Ideal para
+                  </p>
+                  <p className="mt-1.5 text-sm leading-6 text-stone-700">
+                    {restaurant.idealFor}
+                  </p>
+                </div>
               </article>
 
-              <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Ideal para
-                </p>
-                <p className="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
-                  {restaurant.idealFor}
-                </p>
-              </article>
-
+              {/* Highlights + Quote */}
               <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
                   Lo más destacado
@@ -265,14 +269,8 @@ export default async function RestaurantDetailPage({
                     </span>
                   ))}
                 </div>
-              </article>
-
-              <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Reseña breve
-                </p>
-                <blockquote className="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
-                  “{restaurant.reviewQuote}”
+                <blockquote className="mt-4 border-t border-[#f3e3d7] pt-4 text-sm italic leading-7 text-stone-500 sm:text-base sm:leading-8">
+                  "{restaurant.reviewQuote}"
                 </blockquote>
               </article>
             </div>
