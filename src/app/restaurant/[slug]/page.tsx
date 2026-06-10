@@ -131,7 +131,8 @@ export default async function RestaurantDetailPage({
           </RestaurantPhoto>
 
           <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-            <aside className="space-y-5 rounded-[30px] border border-[#f0dccd] bg-white p-4 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
+            {/* Datos esenciales + acciones */}
+            <aside className="space-y-4 rounded-[30px] border border-[#f0dccd] bg-white p-4 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
               <MenuSheet
                 restaurantName={restaurant.name}
                 cuisine={restaurant.cuisine}
@@ -139,83 +140,36 @@ export default async function RestaurantDetailPage({
                 items={menuItems}
               />
 
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Resumen rápido
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-[#fff8f2] p-4">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                      Precio
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-stone-900">
-                      {formatPrice(restaurant.price)}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-[#fff8f2] p-4">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                      Distancia
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-stone-900">
-                      {formatDistance(computedDistance)}
-                    </p>
-                  </div>
-                  <div className="col-span-2 rounded-2xl bg-[#fff8f2] p-4">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                      Reservas
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-stone-900">
-                      {restaurant.acceptsReservations ? "Acepta reservas" : "Sin reserva previa"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3 rounded-[24px] bg-[#fff8f2] p-4">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-                    Dirección
-                  </p>
-                  <p className="mt-1.5 text-sm font-medium leading-6 text-stone-800">
-                    {restaurant.address}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-                    Horarios
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-stone-700">
-                    {restaurant.hours}
-                  </p>
-                </div>
-              </div>
-
-              <div className="rounded-[24px] bg-[#fff8f2] p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Entorno
-                </p>
-                <p className="mt-2 text-sm leading-6 text-stone-700">
-                  {restaurant.neighborhoodNote}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {restaurant.vibeTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-[#fff5ee] px-3 py-1.5 text-sm font-medium text-stone-600"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
+              {/* Precio · Distancia · Reservas */}
               <div className="grid grid-cols-2 gap-3">
-                <FavoriteButton
-                  slug={restaurant.slug}
-                  label="Guardar"
-                  compact
-                />
+                <div className="rounded-2xl bg-[#fff8f2] p-3">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-stone-400">Precio</p>
+                  <p className="mt-1.5 text-sm font-semibold text-stone-900">{formatPrice(restaurant.price)}</p>
+                </div>
+                <div className="rounded-2xl bg-[#fff8f2] p-3">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-stone-400">Distancia</p>
+                  <p className="mt-1.5 text-sm font-semibold text-stone-900">{formatDistance(computedDistance)}</p>
+                </div>
+              </div>
+
+              {/* Dirección + Horarios */}
+              <div className="space-y-2.5 rounded-[22px] bg-[#fff8f2] p-4">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-stone-400">Dirección</p>
+                  <p className="mt-1 text-sm font-medium text-stone-800">{restaurant.address}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-stone-400">Horarios</p>
+                  <p className="mt-1 text-sm text-stone-700">{restaurant.hours}</p>
+                </div>
+                <p className="text-xs text-stone-400">
+                  {restaurant.acceptsReservations ? "✓ Acepta reservas" : "Sin reserva previa"}
+                </p>
+              </div>
+
+              {/* Acciones */}
+              <div className="grid grid-cols-2 gap-3">
+                <FavoriteButton slug={restaurant.slug} label="Guardar" compact />
                 <ShareButton
                   title={restaurant.name}
                   text={`Te comparto ${restaurant.name}, una opción de ${restaurant.cuisine} en ${restaurant.zone}.`}
@@ -235,41 +189,13 @@ export default async function RestaurantDetailPage({
               </a>
             </aside>
 
-            <div className="space-y-5">
-              {/* Por que aparece + Ideal para */}
+            {/* Descripción + Quote */}
+            <div className="space-y-4">
               <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Por qué lo recomendamos
-                </p>
-                <p className="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
+                <p className="text-base leading-7 text-stone-600">
                   {restaurant.reason}
                 </p>
-                <div className="mt-4 rounded-[18px] bg-[#fff8f2] px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-                    Ideal para
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-stone-700">
-                    {restaurant.idealFor}
-                  </p>
-                </div>
-              </article>
-
-              {/* Highlights + Quote */}
-              <article className="rounded-[30px] border border-[#f0dccd] bg-white p-5 shadow-[0_24px_60px_rgba(201,97,36,0.1)] sm:p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Lo más destacado
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {restaurant.highlights.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full bg-[#fff8f2] px-3 py-2 text-sm font-medium text-stone-700"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-                <blockquote className="mt-4 border-t border-[#f3e3d7] pt-4 text-sm italic leading-7 text-stone-500 sm:text-base sm:leading-8">
+                <blockquote className="mt-4 border-t border-[#f3e3d7] pt-4 text-sm italic leading-7 text-stone-400">
                   "{restaurant.reviewQuote}"
                 </blockquote>
               </article>

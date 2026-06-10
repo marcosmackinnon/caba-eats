@@ -234,14 +234,9 @@ export default async function ResultadosPage({
 
               <h1 className="max-w-2xl text-3xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-4xl">
                 {isShowingAlternatives
-                  ? "Más opciones para tu plan."
-                  : "Estas opciones encajan con tu plan."}
+                  ? "Otras opciones."
+                  : "Estas son tus opciones."}
               </h1>
-              <p className="max-w-2xl text-sm leading-6 text-white/82 sm:text-base sm:leading-7">
-                {isShowingAlternatives
-                  ? "Estas son las siguientes alternativas disponibles con los mismos filtros."
-                  : shortenText(buildResultsIntro(filters.cuisine), 120)}
-              </p>
               <div className="flex flex-wrap gap-2">
                 {[
                   filters.plan,
@@ -323,104 +318,50 @@ export default async function ResultadosPage({
                       </span>
                     )}
                   </div>
-
-                  <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
-                    <p className="max-w-md text-xs leading-5 text-white/82 sm:text-sm">
-                      {shortenText(restaurant.imageLabel, 78)}
-                    </p>
-                  </div>
                 </RestaurantPhoto>
 
                 <div className="space-y-3 p-4 sm:p-5">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h2 className="text-xl font-semibold tracking-[-0.03em] sm:text-2xl">
-                          {restaurant.name}
-                        </h2>
-                        <p className="mt-1 text-sm leading-6 text-stone-500">
-                          {shortenText(restaurant.shortDescription, 92)}
-                        </p>
-                      </div>
-                      <button className="hidden rounded-full border border-[#e8d6c8] bg-white px-3 py-1.5 text-sm font-semibold text-stone-700 sm:inline-flex">
-                        ★ {restaurant.rating}
-                      </button>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500">
-                      <span>
-                        {restaurant.cuisine} · {restaurant.zone}
-                      </span>
-                      <span className="text-stone-300">•</span>
-                      <span>
-                        ★ {restaurant.rating} ({restaurant.reviews})
-                      </span>
-                    </div>
+                  {/* Nombre + descripción */}
+                  <div>
+                    <h2 className="text-xl font-semibold tracking-[-0.03em]">
+                      {restaurant.name}
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-stone-500">
+                      {shortenText(restaurant.shortDescription, 80)}
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  {/* Metadata: cocina · zona · rating */}
+                  <p className="text-sm text-stone-400">
+                    {restaurant.cuisine} · {restaurant.zone}
+                    <span className="mx-1.5 text-stone-200">·</span>
+                    ★ {restaurant.rating}
+                  </p>
+
+                  {/* Precio y distancia en 2 columnas */}
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-2xl bg-[#fff8f2] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                        Precio
-                      </p>
-                      <p className="mt-2 text-sm font-semibold text-stone-900">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">Precio</p>
+                      <p className="mt-1.5 text-sm font-semibold text-stone-900">
                         {formatPrice(restaurant.price)}
                       </p>
                     </div>
                     <div className="rounded-2xl bg-[#fff8f2] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                        Distancia
-                      </p>
-                      <p className="mt-2 text-sm font-semibold text-stone-900">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">Distancia</p>
+                      <p className="mt-1.5 text-sm font-semibold text-stone-900">
                         {formatDistance(restaurant.distanceKm)}
                       </p>
                     </div>
-                    <div className="rounded-2xl bg-[#fff8f2] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">
-                        Fit
-                      </p>
-                      <p className={`mt-2 text-sm font-semibold ${matchLabelColor[restaurant.matchLabel]}`}>
-                        {restaurant.matchLabel}
-                      </p>
-                    </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {restaurant.vibeTags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-[#fff5ee] px-3 py-1.5 text-xs font-medium text-stone-600 sm:text-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="rounded-[20px] bg-[#fff8f2] px-4 py-3">
-                    <p className="text-sm leading-6 text-stone-600">
-                      {shortenText(restaurant.dynamicReason, 108)}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-3 pt-1">
-                    <div className="grid grid-cols-2 gap-3">
-                      <FavoriteButton slug={restaurant.slug} label="Guardar" compact />
-                      <ShareButton
-                        title={restaurant.name}
-                        text={`Mirá este lugar: ${restaurant.name} en ${restaurant.zone}.`}
-                        url={`/restaurant/${restaurant.slug}?${filterParams}`}
-                        label="Compartir"
-                        restaurantSlug={restaurant.slug}
-                      />
-                    </div>
-                    <TrackRestaurantLink
-                      href={`/restaurant/${restaurant.slug}?${filterParams}`}
-                      restaurantSlug={restaurant.slug}
-                      className="rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.25)]"
-                    >
-                      Ver detalle
-                    </TrackRestaurantLink>
-                  </div>
+                  {/* CTA */}
+                  <TrackRestaurantLink
+                    href={`/restaurant/${restaurant.slug}?${filterParams}`}
+                    restaurantSlug={restaurant.slug}
+                    className="block rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.22)]"
+                  >
+                    Ver detalle →
+                  </TrackRestaurantLink>
                 </div>
               </article>
             ))}
