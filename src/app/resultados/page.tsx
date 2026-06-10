@@ -13,9 +13,9 @@ import {
   getRestaurantDistanceKm,
   restaurants,
 } from "@/data/restaurants";
+import { getGroqRecommendations } from "@/lib/groq/recommendations";
 import {
   buildReason,
-  buildResultsIntro,
   cuisineMatches,
   getMatchLabel,
   getResultBadge,
@@ -110,38 +110,86 @@ export default async function ResultadosPage({
       ? withinBudget
       : [...candidatePool].sort((a, b) => a.price - b.price).slice(0, Math.max(6, withinBudget.length + 3));
 
-  // Rankear todo el pool disponible
+  const scoringFilters = { ...filters, zone: locationZone };
+
+  const enrichRestaurant = (restaurant: (typeof budgetPool)[number]) => ({
+    ...restaurant,
+    score: scoreRestaurant(restaurant, scoringFilters),
+    dynamicReason: buildReason(restaurant, scoringFilters),
+    matchLabel: getMatchLabel(restaurant, scoringFilters),
+  });
+
+  // Rankear todo el pool disponible (fallback y paginación)
   const allRanked = [...budgetPool]
-    .map((restaurant) => ({
-      ...restaurant,
-      score: scoreRestaurant(restaurant, { ...filters, zone: locationZone }),
-      dynamicReason: buildReason(restaurant, { ...filters, zone: locationZone }),
-      matchLabel: getMatchLabel(restaurant, { ...filters, zone: locationZone }),
-    }))
+    .map(enrichRestaurant)
     .sort((a, b) => b.score - a.score);
 
-  // ─── Lógica de patrocinados ───────────────────────────────────────────────
-  // Slot #1: restaurante patrocinado con mayor descuento que tenga score mínimo.
-  // Slots #2-#3: mejores matches orgánicos (excluye al patrocinado si ya ocupa #1).
-  // En paginación (offset > 0) se muestra solo orgánico.
-  const MIN_SPONSORED_SCORE = 4; // umbral mínimo para que tenga sentido mostrarlo
+  type RankedRestaurant = (typeof allRanked)[number];
 
-  const sponsoredCandidate =
-    offset === 0
-      ? allRanked
-          .filter((r) => r.sponsored != null && r.score >= MIN_SPONSORED_SCORE)
-          .sort((a, b) => b.sponsored!.discountPct - a.sponsored!.discountPct)[0] ?? null
-      : null;
+  let rankedRestaurants: RankedRestaurant[];
+  let sponsoredCandidate: RankedRestaurant | null = null;
+  let usedGroqRecommendations = false;
 
+  if (offset === 0) {
+    const groqRecommendations = await getGroqRecommendations(budgetPool, {
+      plan: filters.plan,
+      cuisine: filters.cuisine,
+      zone: locationZone,
+      vibes: filters.vibes,
+      budget: filters.budget,
+      distance: filters.distance,
+      displayLocation,
+    });
 
-  let rankedRestaurants;
-  if (sponsoredCandidate) {
-    const organic = allRanked
-      .filter((r) => r.slug !== sponsoredCandidate.slug)
-      .slice(0, 2);
-    rankedRestaurants = [sponsoredCandidate, ...organic];
+    if (groqRecommendations) {
+      const restaurantBySlug = new Map(
+        budgetPool.map((restaurant) => [restaurant.slug, restaurant]),
+      );
+
+      rankedRestaurants = groqRecommendations
+        .map((item) => {
+          const restaurant = restaurantBySlug.get(item.slug);
+          if (!restaurant) return null;
+
+          const enriched = enrichRestaurant(restaurant);
+          return {
+            ...enriched,
+            dynamicReason: item.reason.startsWith("Lo elegimos")
+              ? item.reason
+              : `Lo elegimos porque ${item.reason}`,
+          };
+        })
+        .filter((restaurant): restaurant is RankedRestaurant => restaurant != null);
+
+      usedGroqRecommendations = rankedRestaurants.length === 3;
+    } else {
+      rankedRestaurants = [];
+    }
   } else {
-    rankedRestaurants = allRanked.slice(offset, offset + 3);
+    rankedRestaurants = [];
+  }
+
+  if (!usedGroqRecommendations) {
+    // Fallback local si Groq no responde o en paginación
+    const MIN_SPONSORED_SCORE = 4;
+
+    sponsoredCandidate =
+      offset === 0
+        ? allRanked
+            .filter((r) => r.sponsored != null && r.score >= MIN_SPONSORED_SCORE)
+            .sort((a, b) => b.sponsored!.discountPct - a.sponsored!.discountPct)[0] ??
+          null
+        : null;
+
+    if (sponsoredCandidate) {
+      const sponsored = sponsoredCandidate;
+      const organic = allRanked
+        .filter((r) => r.slug !== sponsored.slug)
+        .slice(0, 2);
+      rankedRestaurants = [sponsored, ...organic];
+    } else {
+      rankedRestaurants = allRanked.slice(offset, offset + 3);
+    }
   }
 
   const hasMoreResults = allRanked.length > offset + 3;
