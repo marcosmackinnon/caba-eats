@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import AppNavigation from "@/components/AppNavigation";
 import FavoriteButton from "@/components/FavoriteButton";
 import MenuSheet from "@/components/MenuSheet";
+import RestaurantGallery from "@/components/RestaurantGallery";
 import RestaurantPhoto from "@/components/RestaurantPhoto";
 import RestaurantViewTracker from "@/components/RestaurantViewTracker";
 import ShareButton from "@/components/ShareButton";
+import { getRestaurantGallery } from "@/data/gallery";
 import { getRestaurantPhotoUrl } from "@/data/photos";
 import {
   formatDistance,
@@ -71,6 +73,8 @@ export default async function RestaurantDetailPage({
       : { zone: filters.zone ?? "Palermo" }),
   }).toString();
   const menuItems = buildMenuItems(restaurant);
+  // ~4 fotos por restaurante segun el tipo de cocina (no son reales).
+  const galleryImages = getRestaurantGallery(restaurant.cuisine).slice(0, 4);
   const computedDistance = getRestaurantDistanceKm(restaurant, {
     userLat: filters.userLat ? Number(filters.userLat) : undefined,
     userLng: filters.userLng ? Number(filters.userLng) : undefined,
@@ -199,6 +203,12 @@ export default async function RestaurantDetailPage({
                   "{restaurant.reviewQuote}"
                 </blockquote>
               </article>
+
+              <RestaurantGallery
+                images={galleryImages}
+                name={restaurant.name}
+                fallbackClassName={restaurant.heroClassName}
+              />
             </div>
           </div>
         </section>
