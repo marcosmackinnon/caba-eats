@@ -365,7 +365,7 @@ export default async function ResultadosPage({
                 className="overflow-hidden rounded-[26px] border border-[#f0dccd] bg-white shadow-[0_18px_45px_rgba(201,97,36,0.1)]"
               >
                 <RestaurantPhoto
-                  src={getRestaurantPhotoUrl(restaurant.cuisine)}
+                  src={getRestaurantPhotoUrl(restaurant.cuisine, restaurant.slug)}
                   alt={restaurant.name}
                   fallbackClassName={restaurant.heroClassName}
                   overlayClassName={restaurant.cardAccentClassName}

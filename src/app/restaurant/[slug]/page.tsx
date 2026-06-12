@@ -107,7 +107,7 @@ export default async function RestaurantDetailPage({
 
         <section className="space-y-6 py-6 sm:space-y-8 lg:py-12">
           <RestaurantPhoto
-            src={getRestaurantPhotoUrl(restaurant.cuisine)}
+            src={getRestaurantPhotoUrl(restaurant.cuisine, restaurant.slug)}
             alt={restaurant.name}
             fallbackClassName={restaurant.heroClassName}
             overlayClassName={restaurant.cardAccentClassName}
