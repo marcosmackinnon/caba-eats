@@ -48,7 +48,10 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name.trim() } },
+        options: {
+          data: { full_name: name.trim() },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
       setSubmitting(false);
       if (error) { setErrorMsg(error.message); return; }
@@ -90,7 +93,11 @@ export default function AuthForm() {
     if (resendCooldown || !email) return;
     setResendCooldown(true);
     setResendMsg(null);
-    const { error } = await supabase.auth.resend({ type: "signup", email });
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
     if (error) {
       setResendMsg("No se pudo reenviar. Intentá de nuevo en unos minutos.");
     } else {
