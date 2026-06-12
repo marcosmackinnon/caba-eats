@@ -7,6 +7,7 @@ import MenuSheet from "@/components/MenuSheet";
 import RestaurantGallery from "@/components/RestaurantGallery";
 import RestaurantPhoto from "@/components/RestaurantPhoto";
 import RestaurantViewTracker from "@/components/RestaurantViewTracker";
+import LiveRatingBadge from "@/components/LiveRatingBadge";
 import ReviewSection from "@/components/ReviewSection";
 import ShareButton from "@/components/ShareButton";
 import { getRestaurantGallery } from "@/data/gallery";
@@ -122,9 +123,11 @@ export default async function RestaurantDetailPage({
                 <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm">
                   {restaurant.cuisine} · {restaurant.zone}
                 </span>
-                <span className="inline-flex rounded-full bg-white/16 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm">
-                  ★ {restaurant.rating} · {restaurant.reviews} reseñas
-                </span>
+                <LiveRatingBadge
+                  restaurantSlug={restaurant.slug}
+                  fallbackRating={restaurant.rating}
+                  fallbackCount={restaurant.reviews}
+                />
               </div>
               <h1 className="text-4xl font-semibold leading-[0.98] tracking-[-0.05em] text-white sm:text-5xl">
                 {restaurant.name}

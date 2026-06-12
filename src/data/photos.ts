@@ -86,6 +86,18 @@ const RESTAURANT_PHOTOS: Record<string, string> = {
   "sarkis":              "1697126248475-a537cc5cce28", // hummus y mezze árabe
   "la-pescadorita":      "1559737558-2f5a35f4523b",   // mariscos frescos
   "chungo":              "1571115177098-24ec42ed204d", // torta de postre
+
+  // ── Nuevos ────────────────────────────────────────────────────────────────
+  "tegui":               "1414235077428-338989a624bc", // fine dining íntimo
+  "mishiguene":          "1504674900247-0877df9cc836", // especias y platos de autor
+  "fayer":               "1529042410759-befb1204b468", // mezze y fuego
+  "el-baqueano":         "1467003909585-2f8a72700288", // producto autóctono
+  "aramburu":            "1414235077428-338989a624bc", // menú de pasos
+  "bestia":              "1473093226555-4f5f7d8f3e91", // pasta fresca
+  "narda-comedor":       "1490645935967-10de6ba17061", // verduras de estación
+  "cafe-tortoni":        "1501339847302-ac426a4a7cbb", // café histórico
+  "crizia":              "1534482421-64566f976cfa",    // mariscos y ostras
+  "casa-cavia":          "1495474472287-4d71bcdd2085", // café con jardín
 };
 
 // Fallback por cocina si el slug no tiene foto propia
