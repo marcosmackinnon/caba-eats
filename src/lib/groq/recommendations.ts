@@ -3,6 +3,8 @@ import type { Restaurant } from "@/data/restaurants";
 export type RecommendationFilters = {
   plan: string;
   cuisine: string;
+  /** Cocinas consideradas afines a la elegida (para completar si faltan del rubro exacto) */
+  relatedCuisines?: string[];
   zone: string;
   vibes: string[];
   budget: number;
@@ -23,6 +25,8 @@ type GroqApiResponse = {
   }>;
 };
 
+// Payload minimo para que Groq decida. Se omiten campos pesados como
+// shortDescription para no inflar el consumo de tokens (rate limits).
 type CompactRestaurant = {
   slug: string;
   name: string;
@@ -33,7 +37,6 @@ type CompactRestaurant = {
   rating: number;
   planFit: string[];
   vibeTags: string[];
-  shortDescription: string;
   acceptsReservations: boolean;
 };
 
@@ -50,7 +53,6 @@ function toCompactRestaurant(
     rating: restaurant.rating,
     planFit: restaurant.planFit,
     vibeTags: restaurant.vibeTags,
-    shortDescription: restaurant.shortDescription,
     acceptsReservations: restaurant.acceptsReservations,
   };
 }
@@ -61,10 +63,15 @@ function buildUserPrompt(
 ) {
   const vibesLabel =
     filters.vibes.length > 0 ? filters.vibes.join(", ") : "Sin preferencia";
+  const relatedLabel =
+    filters.relatedCuisines && filters.relatedCuisines.length > 0
+      ? filters.relatedCuisines.join(", ")
+      : "ninguna en particular";
 
   return `Preferencias del usuario:
 - Plan: ${filters.plan}
 - Cocina: ${filters.cuisine}
+- Cocinas afines aceptables (solo si no alcanzan las del rubro exacto): ${relatedLabel}
 - Ubicación de referencia: ${filters.displayLocation}
 - Zona/barrio: ${filters.zone}
 - Vibes: ${vibesLabel}
@@ -125,7 +132,7 @@ export async function getGroqRecommendations(
     },
     body: JSON.stringify({
       model,
-      temperature: 0.2,
+      temperature: 0,
       max_tokens: 700,
       messages: [
         {
@@ -137,8 +144,16 @@ Respondé SOLO con JSON válido, sin markdown ni texto extra, con este formato:
 Reglas:
 - Usá SOLO slugs que existan en el listado.
 - Devolvé exactamente ${limit} recomendaciones distintas.
-- Priorizá distancia dentro del radio, presupuesto, plan, cocina y vibes.
-- Si no hay match perfecto de cocina, elegí alternativas razonables y explicalo en la razón.`,
+- La cocina elegida por el usuario es la prioridad MÁXIMA: primero elegí
+  restaurantes cuyo campo "cuisine" coincida EXACTAMENTE con la cocina pedida.
+- Si en el listado no hay suficientes del rubro exacto para llegar a ${limit},
+  completá SOLO con restaurantes de las "cocinas afines aceptables" indicadas, y
+  aclará en la razón que es una alternativa cercana al rubro pedido.
+- Nunca completes con una cocina que no sea ni la exacta ni una de las afines.
+- Si la cocina pedida es "Sin preferencia" o "Sorprendeme", ignorá esta regla y
+  priorizá plan, vibes, zona y presupuesto.
+- Dentro de esas restricciones, priorizá distancia dentro del radio, presupuesto,
+  plan y vibes.`,
         },
         {
           role: "user",

@@ -16,6 +16,7 @@ import {
 import { getGroqRecommendations } from "@/lib/groq/recommendations";
 import {
   buildReason,
+  cuisineFamilyMap,
   cuisineMatches,
   getMatchLabel,
   getResultBadge,
@@ -119,8 +120,23 @@ export default async function ResultadosPage({
     matchLabel: getMatchLabel(restaurant, scoringFilters),
   });
 
-  // Rankear todo el pool disponible (fallback y paginación)
-  const allRanked = [...budgetPool]
+  // cuisineFamilyMap[cocina] = cocina exacta + cocinas afines. Vacio para
+  // "Sin preferencia"/"Sorprendeme". Lo usan tanto Groq como el fallback local
+  // para no mezclar rubros cuando el usuario pidio una cocina puntual.
+  const cuisineFamily = cuisineFamilyMap[filters.cuisine] ?? [];
+  const relatedCuisines = cuisineFamily.filter((c) => c !== filters.cuisine);
+
+  // Pool para el ranking local (fallback): si el usuario eligio una cocina
+  // puntual y hay >=3 del rubro+afines, restringimos a esos; si no, todo el pool.
+  const cuisineScopedBudgetPool =
+    cuisineFamily.length > 0
+      ? budgetPool.filter((r) => cuisineFamily.includes(r.cuisine))
+      : [];
+  const fallbackPool =
+    cuisineScopedBudgetPool.length >= 3 ? cuisineScopedBudgetPool : budgetPool;
+
+  // Rankear el pool disponible (fallback y paginación)
+  const allRanked = [...fallbackPool]
     .map(enrichRestaurant)
     .sort((a, b) => b.score - a.score);
 
@@ -131,9 +147,22 @@ export default async function ResultadosPage({
   let usedGroqRecommendations = false;
 
   if (offset === 0) {
-    const groqRecommendations = await getGroqRecommendations(budgetPool, {
+    // Groq elige los 3. Si el usuario pidio una cocina puntual, le pasamos solo
+    // los candidatos de ese rubro + afines (garantia en codigo de que no se cuele
+    // otra cocina y, de paso, menos tokens). Si no llegan a 3, o si es "Sin
+    // preferencia"/"Sorprendeme", Groq elige sobre la base completa.
+    const cuisineScopedPool =
+      cuisineFamily.length > 0
+        ? enrichedRestaurants.filter((r) => cuisineFamily.includes(r.cuisine))
+        : [];
+
+    const groqCandidates =
+      cuisineScopedPool.length >= 3 ? cuisineScopedPool : enrichedRestaurants;
+
+    const groqRecommendations = await getGroqRecommendations(groqCandidates, {
       plan: filters.plan,
       cuisine: filters.cuisine,
+      relatedCuisines,
       zone: locationZone,
       vibes: filters.vibes,
       budget: filters.budget,
@@ -143,7 +172,7 @@ export default async function ResultadosPage({
 
     if (groqRecommendations) {
       const restaurantBySlug = new Map(
-        budgetPool.map((restaurant) => [restaurant.slug, restaurant]),
+        enrichedRestaurants.map((restaurant) => [restaurant.slug, restaurant]),
       );
 
       rankedRestaurants = groqRecommendations
@@ -269,17 +298,7 @@ export default async function ResultadosPage({
 
         <section className="space-y-4 py-4 sm:space-y-6 lg:py-10">
           <div className="overflow-hidden rounded-[28px] bg-[#f27a3f] p-4 text-white shadow-[0_20px_50px_rgba(201,97,36,0.2)] sm:rounded-[34px] sm:p-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/14 px-3 py-1.5 text-xs font-medium text-white/90 sm:text-sm">
-                  <span className="h-2 w-2 rounded-full bg-white" />
-                  {isShowingAlternatives ? "Otras opciones" : "Decisión rápida"}
-                </div>
-                <span className="rounded-full bg-white/14 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/90">
-                  3 opciones
-                </span>
-              </div>
-
+            <div className="space-y-4">
               <h1 className="max-w-2xl text-3xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-4xl">
                 {isShowingAlternatives
                   ? "Otras opciones."
