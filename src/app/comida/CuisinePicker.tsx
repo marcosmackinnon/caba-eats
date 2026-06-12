@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 
 import type { CuisineOption } from "@/data/cuisines";
 
+const INITIAL_VISIBLE = 4;
+
 export default function CuisinePicker({
   options,
   selectedPlan,
@@ -13,6 +15,7 @@ export default function CuisinePicker({
   selectedPlan: string;
 }) {
   const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState(false);
 
   const highlighted = useMemo(
     () => options.filter((option) => option.highlight),
@@ -38,24 +41,23 @@ export default function CuisinePicker({
     });
   }, [options, query]);
 
-  const totalOptions = options.filter((option) => !option.highlight).length;
+  const isSearching = query.trim().length > 0;
+
+  // Mientras no se busque, mostramos solo las primeras 4 y un boton "Ver mas".
+  // Al buscar, mostramos todas las coincidencias sin recortar.
+  const visibleOptions =
+    isSearching || expanded
+      ? filteredOptions
+      : filteredOptions.slice(0, INITIAL_VISIBLE);
+
+  const canToggle = !isSearching && filteredOptions.length > INITIAL_VISIBLE;
 
   return (
     <div className="space-y-4">
       <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)]">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-              Opciones rápidas
-            </p>
-            <p className="mt-2 text-sm leading-6 text-stone-500">
-              Si querés resolver sin pensar tanto, arrancá por acá.
-            </p>
-          </div>
-          <span className="rounded-full bg-[#fff1e7] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#c96124]">
-            2 atajos
-          </span>
-        </div>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
+          Opciones rápidas
+        </p>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           {highlighted.map((option) => (
@@ -78,28 +80,15 @@ export default function CuisinePicker({
               <h2 className="mt-3 text-[15px] font-semibold leading-tight tracking-[-0.03em] text-stone-900">
                 {option.title}
               </h2>
-              <p className="mt-1 text-xs leading-5 text-stone-500">
-                {option.description}
-              </p>
             </Link>
           ))}
         </div>
       </div>
 
       <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)]">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-              Elegí una cocina
-            </p>
-            <p className="mt-2 text-sm leading-6 text-stone-500">
-              Mientras más sumemos, más cómodo te va a quedar buscar por acá.
-            </p>
-          </div>
-          <span className="rounded-full bg-[#fff1e7] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#c96124]">
-            {totalOptions} opciones
-          </span>
-        </div>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
+          Elegí una cocina
+        </p>
 
         <label className="mt-4 block">
           <span className="sr-only">Buscar tipo de comida</span>
@@ -117,7 +106,7 @@ export default function CuisinePicker({
         </label>
 
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {filteredOptions.map((option) => (
+          {visibleOptions.map((option) => (
             <Link
               key={option.title}
               href={`/preferencias?plan=${encodeURIComponent(
@@ -137,12 +126,21 @@ export default function CuisinePicker({
               <h2 className="mt-3 text-[15px] font-semibold leading-tight text-stone-900">
                 {option.title}
               </h2>
-              <p className="mt-1 text-xs leading-5 text-stone-500">
-                {option.description}
-              </p>
             </Link>
           ))}
         </div>
+
+        {canToggle ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((prev) => !prev)}
+            className="mt-4 w-full rounded-2xl border border-[#f2b48a] bg-[#fff5ee] px-4 py-3 text-sm font-semibold text-[#c96124] transition hover:bg-[#ffeede]"
+          >
+            {expanded
+              ? "Ver menos"
+              : `Ver mas (${filteredOptions.length - INITIAL_VISIBLE})`}
+          </button>
+        ) : null}
 
         {filteredOptions.length === 0 ? (
           <div className="mt-4 rounded-[20px] border border-dashed border-[#ebd7ca] bg-[#fffaf6] px-4 py-5 text-sm text-stone-500">

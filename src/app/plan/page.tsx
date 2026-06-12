@@ -58,79 +58,26 @@ export default function PlanPage() {
         </header>
 
         <section className="space-y-4 py-4 sm:space-y-6 sm:py-6">
-          <div className="overflow-hidden rounded-[30px] bg-[#f27a3f] p-4 text-white shadow-[0_24px_60px_rgba(201,97,36,0.2)] sm:rounded-[34px] sm:p-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/70">
-                    Buenos Aires, AR
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-white/85 sm:text-sm">
-                    Elegí tu contexto primero
-                  </p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/16 text-lg sm:h-12 sm:w-12 sm:text-xl">
-                  <span aria-hidden="true">🍽️</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h1 className="max-w-xl text-3xl font-semibold leading-[1] tracking-[-0.05em] sm:text-5xl">
-                  ¿Qué plan tenés hoy?
-                </h1>
-                <p className="max-w-xl text-sm leading-6 text-white/82 sm:text-lg sm:leading-7">
-                  Elegí el tipo de salida y seguimos con comida, presupuesto y zona.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2 text-sm">
-                <span className="rounded-full bg-white/22 px-3 py-1.5 font-medium">
-                  4 pasos rápidos
-                </span>
-                <span className="rounded-full bg-white/14 px-3 py-1.5 text-white/80">
-                  Solo lo necesario
-                </span>
-              </div>
-            </div>
+          <div className="overflow-hidden rounded-[30px] bg-[#f27a3f] px-5 py-7 text-white shadow-[0_24px_60px_rgba(201,97,36,0.2)] sm:rounded-[34px] sm:px-8 sm:py-10">
+            <h1 className="text-3xl font-semibold leading-[1] tracking-[-0.05em] sm:text-5xl">
+              ¿Qué plan tenés hoy?
+            </h1>
           </div>
 
           <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)] sm:rounded-[30px] sm:p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-                  Elegí el plan
-                </p>
-                <p className="mt-1 text-sm leading-6 text-stone-500">
-                  Tocá una opción y seguimos con la comida.
-                </p>
-              </div>
-              <span className="rounded-full bg-[#fff1e7] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#c96124]">
-                6 opciones
-              </span>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {planOptions.map((option) => (
                 <Link
                   key={option.title}
                   href={`/comida?plan=${encodeURIComponent(option.title)}`}
-                  className="group rounded-[20px] border border-[#f0dccd] bg-[#fffaf6] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f2b48a] hover:bg-white hover:shadow-[0_18px_35px_rgba(201,97,36,0.1)] sm:rounded-[24px] sm:p-4"
+                  className="group flex flex-col items-center justify-center gap-2 rounded-[20px] border border-[#f0dccd] bg-[#fffaf6] p-5 text-center transition duration-200 hover:-translate-y-0.5 hover:border-[#f2b48a] hover:bg-white hover:shadow-[0_18px_35px_rgba(201,97,36,0.1)] sm:rounded-[24px] sm:p-6"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#fff1e7] text-xl sm:h-11 sm:w-11 sm:text-2xl">
-                      <span aria-hidden="true">{option.emoji}</span>
-                    </div>
-                    <span className="text-sm text-stone-300 transition group-hover:text-[#f27a3f] sm:text-lg">
-                      →
-                    </span>
-                  </div>
-
-                  <h2 className="mt-3 text-base font-semibold leading-tight tracking-[-0.02em] text-stone-900 sm:mt-4 sm:text-lg">
+                  <span aria-hidden="true" className="text-3xl sm:text-4xl">
+                    {option.emoji}
+                  </span>
+                  <h2 className="text-base font-semibold leading-tight tracking-[-0.02em] text-stone-900 sm:text-lg">
                     {option.title}
                   </h2>
-                  <p className="mt-1 text-xs leading-5 text-stone-500 sm:mt-2 sm:text-sm sm:leading-6">
-                    {option.description}
-                  </p>
                 </Link>
               ))}
             </div>

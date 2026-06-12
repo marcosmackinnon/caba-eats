@@ -177,25 +177,10 @@ export default function PreferenciasClient({
         <section className="grid flex-1 gap-4 py-4 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12 lg:py-12">
           <div className="space-y-4 lg:pt-4">
             <div className="overflow-hidden rounded-[24px] bg-[#f27a3f] p-4 text-white shadow-[0_18px_45px_rgba(201,97,36,0.18)] sm:rounded-[30px] sm:p-6">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/22 bg-white/14 px-3 py-2 text-sm font-medium text-white/90">
-                    <span className="h-2 w-2 rounded-full bg-white" />
-                    {isQuickMode ? "Casi listo" : "Ajustemos la búsqueda"}
-                  </div>
-                  <span className="rounded-full bg-white/16 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/88">
-                    Paso 3
-                  </span>
-                </div>
-
+              <div className="space-y-4">
                 <h1 className="max-w-xl text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">
                   {isQuickMode ? "Zona y presupuesto." : "Presupuesto, zona y estilo."}
                 </h1>
-                <p className="max-w-xl text-sm leading-6 text-white/82 sm:text-base sm:leading-7">
-                  {isQuickMode
-                    ? "Elegiste algo rápido, así que solo necesitamos saber dónde estás y cuánto querés gastar."
-                    : "Ajustá lo importante para que te devolvamos pocas opciones, pero mucho más precisas dentro de CABA."}
-                </p>
 
                 <div className="flex flex-wrap gap-2">
                   <span className="rounded-full bg-white/18 px-3 py-1.5 text-sm font-medium">
