@@ -26,6 +26,9 @@ export default function FavoritesClient() {
     favorites.includes(restaurant.slug),
   );
   const shortlistPreview = favoriteRestaurants.slice(0, 3).map((restaurant) => restaurant.name);
+  const shareUrl = favoriteRestaurants.length > 0
+    ? `/s/${favoriteRestaurants.map((r) => r.slug).join(",")}`
+    : "/plan";
   const shortlistText =
     shortlistPreview.length === 0
       ? "Armé una shortlist en CABA Eats."
@@ -68,8 +71,8 @@ export default function FavoritesClient() {
               <div className="flex flex-col gap-3 pt-1 sm:flex-row">
                 <ShareButton
                   title="Mi shortlist de CABA Eats"
-                  text={`${shortlistText} Si querés, podés armar la tuya acá.`}
-                  url="/plan"
+                  text={`${shortlistText} Mirala acá:`}
+                  url={shareUrl}
                   label="Compartir shortlist"
                 />
                 <Link
