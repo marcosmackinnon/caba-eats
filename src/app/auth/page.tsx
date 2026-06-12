@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import AuthForm from "./AuthForm";
 
 export default function AuthPage() {
@@ -25,7 +26,9 @@ export default function AuthPage() {
 
       {/* Bloque inferior — formulario */}
       <div className="flex flex-1 flex-col justify-center px-6 pt-16 pb-10">
-        <AuthForm />
+        <Suspense fallback={null}>
+          <AuthForm />
+        </Suspense>
       </div>
 
     </main>
