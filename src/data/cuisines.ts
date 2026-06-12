@@ -7,12 +7,6 @@ export type CuisineOption = {
 
 export const cuisineOptions: CuisineOption[] = [
   {
-    title: "Sin preferencia",
-    description: "Mostranos lo mejor y listo.",
-    emoji: "✨",
-    highlight: true,
-  },
-  {
     title: "Italiana",
     description: "Pastas y pizza.",
     emoji: "🍝",

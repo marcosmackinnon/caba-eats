@@ -10,6 +10,7 @@ const items = [
   { href: "/", label: "Inicio", icon: "⌂" },
   { href: "/plan", label: "Buscar", icon: "⌕" },
   { href: "/favoritos", label: "Favoritos", icon: "♡" },
+  { href: "/historial", label: "Historial", icon: "🕐" },
 ];
 
 export default function MobileBottomNav() {
@@ -20,7 +21,7 @@ export default function MobileBottomNav() {
   if (pathname.startsWith("/auth")) return null;
 
   return (
-    <nav className="fixed inset-x-4 bottom-4 z-50 flex items-center justify-around gap-1 rounded-[28px] border border-white/80 bg-white/92 px-2 py-2 shadow-[0_18px_45px_rgba(201,97,36,0.16)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-50 flex items-center justify-around rounded-[26px] border border-white/80 bg-white/95 px-1 py-1.5 shadow-[0_18px_45px_rgba(201,97,36,0.16)] backdrop-blur md:hidden">
       {items.map((item) => {
         const isActive =
           item.href === "/"
@@ -31,14 +32,14 @@ export default function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`relative flex min-w-20 flex-col items-center justify-center rounded-[20px] px-3 py-2 text-xs font-medium transition ${
-              isActive ? "bg-[#fff1e7] text-[#c96124]" : "text-stone-500"
+            className={`relative flex flex-col items-center justify-center gap-0.5 rounded-[18px] px-2.5 py-2 text-[10px] font-medium transition ${
+              isActive ? "bg-[#fff1e7] text-[#c96124]" : "text-stone-400 hover:text-stone-600"
             }`}
           >
-            <span className="text-lg leading-none">{item.icon}</span>
-            <span className="mt-1">{item.label}</span>
-            {item.href === "/favoritos" ? (
-              <span className="absolute right-2 top-1 rounded-full bg-[#f27a3f] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            <span className="text-base leading-none">{item.icon}</span>
+            <span>{item.label}</span>
+            {item.href === "/favoritos" && favorites.length > 0 ? (
+              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#f27a3f] text-[9px] font-bold text-white">
                 {favorites.length}
               </span>
             ) : null}

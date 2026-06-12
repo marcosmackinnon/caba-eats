@@ -8,6 +8,7 @@ import FavoriteButton from "@/components/FavoriteButton";
 import ShareButton from "@/components/ShareButton";
 import { useFavorites } from "@/components/FavoritesProvider";
 import { getLastSearchParamsKey } from "@/components/SearchSessionSync";
+import { getRestaurantPhotoUrl } from "@/data/photos";
 import {
   formatDistance,
   formatPrice,
@@ -104,10 +105,11 @@ export default function FavoritesClient() {
                   key={restaurant.slug}
                   className="overflow-hidden rounded-[34px] border border-[#f0dccd] bg-white shadow-[0_22px_60px_rgba(201,97,36,0.1)]"
                 >
-                  <div className={`relative h-52 ${restaurant.heroClassName}`}>
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-t ${restaurant.cardAccentClassName}`}
-                    />
+                  <div
+                    className="relative h-52 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${getRestaurantPhotoUrl(restaurant.cuisine, restaurant.slug)})` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                       <p className="max-w-md text-sm leading-6 text-white/80">
                         {restaurant.imageLabel}

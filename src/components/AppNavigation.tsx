@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import AuthStatus from "./AuthStatus";
@@ -10,11 +11,14 @@ const items = [
   { href: "/", label: "Inicio" },
   { href: "/plan", label: "Buscar" },
   { href: "/favoritos", label: "Favoritos" },
+  { href: "/historial", label: "Historial" },
 ];
 
 export default function AppNavigation() {
   const pathname = usePathname();
   const { favorites } = useFavorites();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <nav className="hidden flex-wrap items-center gap-2 rounded-full border border-white/80 bg-white/85 p-1.5 shadow-[0_12px_35px_rgba(201,97,36,0.08)] backdrop-blur md:flex">
@@ -35,7 +39,7 @@ export default function AppNavigation() {
             }`}
           >
             <span>{item.label}</span>
-            {item.href === "/favoritos" ? (
+            {item.href === "/favoritos" && mounted ? (
               <span
                 className={`ml-2 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
                   isActive ? "bg-white/20 text-white" : "bg-[#fff1e7] text-[#c96124]"

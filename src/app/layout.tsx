@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import Toast from "@/components/Toast";
 import { FavoritesProvider } from "@/components/FavoritesProvider";
 import "./globals.css";
 
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Restaurant Recommendation",
-  description: "Encontrá restaurantes según tu plan, presupuesto y zona.",
+  title: "Dondy — Encontrá dónde comer en CABA",
+  description: "Encontrá el restaurante ideal según tu plan, presupuesto y zona en Buenos Aires.",
 };
 
 export default function RootLayout({
@@ -33,6 +34,7 @@ export default function RootLayout({
         <FavoritesProvider>
           {children}
           <MobileBottomNav />
+          <Toast />
         </FavoritesProvider>
       </body>
     </html>

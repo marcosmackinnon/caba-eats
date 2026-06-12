@@ -64,12 +64,10 @@ export default function AuthStatus({
   if (state.loading) {
     return (
       <span
-        className={`rounded-full ${
-          compact ? "px-3 py-2 text-xs" : "px-4 py-2 text-sm"
-        } text-stone-400`}
-      >
-        Cargando...
-      </span>
+        className={`inline-block animate-pulse rounded-full bg-stone-100 ${
+          compact ? "h-7 w-12" : "h-9 w-20"
+        }`}
+      />
     );
   }
 

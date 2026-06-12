@@ -56,37 +56,6 @@ export default function CuisinePicker({
     <div className="space-y-4">
       <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)]">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
-          Opciones rápidas
-        </p>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {highlighted.map((option) => (
-            <Link
-              key={option.title}
-              href={`/preferencias?plan=${encodeURIComponent(
-                selectedPlan,
-              )}&cuisine=${encodeURIComponent(option.title)}`}
-              className="group rounded-[20px] border border-[#f0dccd] bg-[#fffaf6] p-3 transition duration-200 hover:-translate-y-1 hover:border-[#f2b48a] hover:bg-white hover:shadow-[0_18px_40px_rgba(201,97,36,0.1)]"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#fff1e7] text-xl">
-                  <span aria-hidden="true">{option.emoji}</span>
-                </div>
-                <span className="text-sm text-stone-300 transition group-hover:text-[#f27a3f]">
-                  →
-                </span>
-              </div>
-
-              <h2 className="mt-3 text-[15px] font-semibold leading-tight tracking-[-0.03em] text-stone-900">
-                {option.title}
-              </h2>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)]">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
           Elegí una cocina
         </p>
 
@@ -149,6 +118,33 @@ export default function CuisinePicker({
           </div>
         ) : null}
       </div>
+
+      {highlighted.length > 0 && (
+        <div className="flex justify-center">
+          <div className="w-full max-w-xs rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)]">
+            <p className="text-center text-sm font-semibold uppercase tracking-[0.18em] text-stone-400">
+              Opciones rápidas
+            </p>
+            <div className="mt-4 flex flex-col gap-3">
+              {highlighted.map((option) => (
+                <Link
+                  key={option.title}
+                  href={`/preferencias?plan=${encodeURIComponent(selectedPlan)}&cuisine=${encodeURIComponent(option.title)}`}
+                  className="group flex items-center justify-between rounded-[20px] border border-[#f0dccd] bg-[#fffaf6] px-4 py-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f2b48a] hover:bg-white hover:shadow-[0_12px_30px_rgba(201,97,36,0.1)]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#fff1e7] text-xl">
+                      <span aria-hidden="true">{option.emoji}</span>
+                    </div>
+                    <span className="text-[15px] font-semibold text-stone-900">{option.title}</span>
+                  </div>
+                  <span className="text-sm text-stone-300 transition group-hover:text-[#f27a3f]">→</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

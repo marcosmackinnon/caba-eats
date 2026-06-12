@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppNavigation from "@/components/AppNavigation";
+import HomeSearch from "@/components/HomeSearch";
+import { getRestaurantPhotoUrl } from "@/data/photos";
 import { restaurants } from "@/data/restaurants";
 import { trendingSpot } from "@/data/trending";
 
@@ -48,9 +50,6 @@ export default async function Home({
         <section className="grid gap-8 py-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-14 lg:py-16">
           <div className="space-y-6">
             <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-stone-400">
-                Buenos Aires, AR
-              </p>
               <h1 className="max-w-2xl text-4xl font-semibold leading-[0.98] tracking-[-0.05em] text-stone-900 sm:text-5xl lg:text-6xl">
                 Encontrá dónde comer en instantes.
               </h1>
@@ -58,6 +57,8 @@ export default async function Home({
                 Elegís el plan, la comida y tu ubicación o zona, y te devolvemos las mejores 3 opciones.
               </p>
             </div>
+
+            <HomeSearch />
 
             <div className="space-y-3">
               <Link
@@ -93,28 +94,36 @@ export default async function Home({
 
           <aside className="space-y-4 sm:space-y-5">
             <div className="rounded-[26px] border border-[#f0dccd] bg-white/92 p-4 text-stone-900 shadow-[0_16px_45px_rgba(201,97,36,0.08)] sm:rounded-[30px] sm:p-5">
-              <div className="relative overflow-hidden rounded-[22px] bg-[linear-gradient(135deg,_#f4dbc0,_#eeb07d)] p-4 text-stone-900">
-                <div className="absolute inset-0 bg-gradient-to-t from-[#8f4a1c]/15 via-transparent to-transparent" />
-                <div className="relative">
+              <div
+                className="relative overflow-hidden rounded-[22px] bg-cover bg-center"
+                style={{ backgroundImage: `url(${getRestaurantPhotoUrl(trendingRestaurant.cuisine, trendingRestaurant.slug)})` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/20" />
+                <div className="relative p-4">
                   <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8f5a35]">
-                        {trendingSpot.label}
-                      </p>
-                      <h2 className="mt-2 text-2xl font-semibold text-stone-900">
-                        {trendingRestaurant.name}
-                      </h2>
-                      <p className="mt-1 text-sm text-stone-600">
-                        {trendingSpot.zone} · viral en {trendingSpot.source}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-white/75 px-3 py-1 text-sm font-semibold text-[#c96124] backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]">
+                      {trendingSpot.label}
+                    </p>
+                    <span className="shrink-0 rounded-full bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                       #1 del momento
                     </span>
                   </div>
-                  <p className="mt-8 max-w-xs text-sm leading-6 text-stone-700">
-                    {trendingSpot.headline}
-                  </p>
+                  <div className="mt-16 pb-1">
+                    <Link
+                      href={`/restaurant/${trendingRestaurant.slug}`}
+                      className="group inline-block"
+                    >
+                      <h2 className="text-2xl font-semibold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] underline decoration-transparent underline-offset-2 transition group-hover:decoration-white/70">
+                        {trendingRestaurant.name}
+                      </h2>
+                    </Link>
+                    <p className="mt-1 text-sm text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]">
+                      {trendingSpot.zone} · viral en {trendingSpot.source}
+                    </p>
+                    <p className="mt-2 max-w-xs text-sm leading-6 text-white/75 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
+                      {trendingSpot.headline}
+                    </p>
+                  </div>
                 </div>
               </div>
 

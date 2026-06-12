@@ -7,6 +7,7 @@ import MenuSheet from "@/components/MenuSheet";
 import RestaurantGallery from "@/components/RestaurantGallery";
 import RestaurantPhoto from "@/components/RestaurantPhoto";
 import RestaurantViewTracker from "@/components/RestaurantViewTracker";
+import ReviewSection from "@/components/ReviewSection";
 import ShareButton from "@/components/ShareButton";
 import { getRestaurantGallery } from "@/data/gallery";
 import { getRestaurantPhotoUrl } from "@/data/photos";
@@ -99,9 +100,12 @@ export default async function RestaurantDetailPage({
 
           <div className="flex flex-wrap items-center justify-end gap-3">
             <AppNavigation />
-            <div className="rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-medium text-stone-600 shadow-[0_12px_35px_rgba(201,97,36,0.08)]">
-              Ficha del restaurante
-            </div>
+            <a
+              href="#resenas"
+              className="rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-medium text-stone-600 shadow-[0_12px_35px_rgba(201,97,36,0.08)] transition hover:border-[#f2b48a] hover:text-[#c96124]"
+            >
+              Ver reseñas ↓
+            </a>
           </div>
         </header>
 
@@ -211,6 +215,11 @@ export default async function RestaurantDetailPage({
               />
             </div>
           </div>
+
+          <ReviewSection
+            restaurantSlug={restaurant.slug}
+            restaurantName={restaurant.name}
+          />
         </section>
       </section>
     </main>

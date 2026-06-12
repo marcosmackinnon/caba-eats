@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import AppNavigation from "@/components/AppNavigation";
+import HomeSearch from "@/components/HomeSearch";
 
 const planOptions = [
   {
@@ -63,6 +64,8 @@ export default function PlanPage() {
               ¿Qué plan tenés hoy?
             </h1>
           </div>
+
+          <HomeSearch />
 
           <div className="rounded-[28px] border border-[#f0dccd] bg-white/88 p-4 shadow-[0_16px_45px_rgba(201,97,36,0.08)] sm:rounded-[30px] sm:p-5">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
