@@ -10,12 +10,14 @@ export default function ShareButton({
   url,
   label = "Compartir",
   restaurantSlug,
+  primary = false,
 }: {
   title: string;
   text: string;
   url?: string;
   label?: string;
   restaurantSlug?: string;
+  primary?: boolean;
 }) {
   const [status, setStatus] = useState<"idle" | "copied">("idle");
 
@@ -27,14 +29,10 @@ export default function ShareButton({
 
     if (navigator.share) {
       try {
-        await navigator.share({
-          title,
-          text,
-          url: shareUrl,
-        });
+        await navigator.share({ title, text, url: shareUrl });
         return;
       } catch {
-        // Si falla o se cancela, seguimos con copiar link para que no sea un botón muerto.
+        // fallback to clipboard
       }
     }
 
@@ -47,10 +45,7 @@ export default function ShareButton({
     }
 
     if (restaurantSlug) {
-      void logRestaurantInteraction({
-        restaurantSlug,
-        action: "shared",
-      });
+      void logRestaurantInteraction({ restaurantSlug, action: "shared" });
     }
   }
 
@@ -58,9 +53,13 @@ export default function ShareButton({
     <button
       type="button"
       onClick={handleShare}
-      className="rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
+      className={
+        primary
+          ? "inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#f27a3f] px-5 py-3 text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.28)] transition hover:-translate-y-0.5"
+          : "inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
+      }
     >
-      {status === "copied" ? "Link copiado" : label}
+      {status === "copied" ? "✓ Link copiado" : label}
     </button>
   );
 }

@@ -134,29 +134,30 @@ export default function HistorialClient() {
               </Link>
             </div>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {enriched.map(({ restaurant, visitedAt }) => {
                 const r = restaurant!;
                 return (
                   <Link
                     key={`${r.slug}-${visitedAt}`}
                     href={`/restaurant/${r.slug}`}
-                    className="group overflow-hidden rounded-[24px] border border-[#f0dccd] bg-white shadow-[0_12px_30px_rgba(201,97,36,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(201,97,36,0.14)]"
+                    className="group overflow-hidden rounded-[26px] border border-[#f0dccd] bg-white shadow-[0_12px_30px_rgba(201,97,36,0.08)] transition hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(201,97,36,0.15)]"
                   >
-                    {/* Foto */}
                     <div
-                      className="h-28 w-full bg-cover bg-center"
+                      className="relative h-36 w-full bg-cover bg-center"
                       style={{ backgroundImage: `url(${getRestaurantPhotoUrl(r.cuisine, r.slug)})` }}
-                    />
-                    <div className="p-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-stone-900">{r.name}</p>
-                          <p className="text-xs text-stone-400">{r.cuisine} · {r.zone}</p>
-                        </div>
-                        <span className="shrink-0 text-xs text-stone-300 group-hover:text-[#f27a3f]">→</span>
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                      <div className="absolute bottom-2.5 left-3">
+                        <p className="text-xs font-medium text-white/80">{r.cuisine} · {r.zone}</p>
                       </div>
-                      <p className="mt-1.5 text-[11px] text-stone-400">{formatRelative(visitedAt)}</p>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 px-4 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-stone-900">{r.name}</p>
+                        <p className="mt-0.5 text-[11px] text-stone-400">{formatRelative(visitedAt)}</p>
+                      </div>
+                      <span className="shrink-0 text-sm text-stone-300 transition group-hover:text-[#f27a3f] group-hover:translate-x-0.5">→</span>
                     </div>
                   </Link>
                 );

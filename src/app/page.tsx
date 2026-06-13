@@ -60,17 +60,17 @@ export default async function Home({
 
             <HomeSearch />
 
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="/plan"
-                className="flex items-center justify-center gap-2 rounded-full bg-[#f27a3f] px-6 py-4 text-center text-base font-semibold text-white shadow-[0_18px_40px_rgba(242,122,63,0.35)] transition-transform hover:-translate-y-0.5 sm:inline-flex"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#f27a3f] px-6 py-3.5 text-base font-semibold text-white shadow-[0_18px_40px_rgba(242,122,63,0.35)] transition-transform hover:-translate-y-0.5"
               >
                 Buscar restaurante
                 <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href="/favoritos"
-                className="flex items-center justify-center gap-2 rounded-full border border-[#e8d6c8] bg-white px-6 py-4 text-center text-base font-semibold text-stone-700 transition-colors hover:bg-[#fffaf6] sm:inline-flex sm:ml-3"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#e8d6c8] bg-white px-6 py-3.5 text-base font-semibold text-stone-700 transition-colors hover:bg-[#fffaf6]"
               >
                 Ver favoritos
               </Link>

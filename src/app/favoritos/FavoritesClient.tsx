@@ -68,16 +68,17 @@ export default function FavoritesClient() {
               una salida futura.
             </p>
             {favoriteRestaurants.length > 0 ? (
-              <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+              <div className="flex flex-wrap gap-3 pt-1">
                 <ShareButton
                   title="Mi shortlist de CABA Eats"
                   text={`${shortlistText} Mirala acá:`}
                   url={shareUrl}
                   label="Compartir shortlist"
+                  primary
                 />
                 <Link
                   href="/plan"
-                  className="rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-center text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
                 >
                   Seguir explorando
                 </Link>

@@ -375,15 +375,9 @@ export default async function ResultadosPage({
                     <span className="rounded-full bg-white/88 px-2.5 py-1 text-xs font-semibold text-[#c96124] shadow-[0_10px_25px_rgba(0,0,0,0.08)]">
                       #{offset + index + 1}
                     </span>
-                    {sponsoredCandidate?.slug === restaurant.slug ? (
-                      <span className="rounded-full bg-[#f27a3f] px-2.5 py-1 text-xs font-semibold text-white shadow-[0_6px_16px_rgba(242,122,63,0.4)]">
-                        🏷 {restaurant.sponsored!.label}
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-black/20 px-2.5 py-1 text-xs font-medium text-white/95 backdrop-blur-sm">
-                        {getResultBadge(offset + index, restaurant, filters.cuisine)}
-                      </span>
-                    )}
+                    <span className="rounded-full bg-black/20 px-2.5 py-1 text-xs font-medium text-white/95 backdrop-blur-sm">
+                      {getResultBadge(offset + index, restaurant, filters.cuisine)}
+                    </span>
                   </div>
                 </RestaurantPhoto>
 
@@ -398,37 +392,40 @@ export default async function ResultadosPage({
                     </p>
                   </div>
 
-                  {/* Metadata: cocina · zona · rating */}
-                  <p className="text-sm text-stone-400">
-                    {restaurant.cuisine} · {restaurant.zone}
-                    <span className="mx-1.5 text-stone-200">·</span>
-                    ★ {restaurant.rating}
-                  </p>
+                  {/* Razón Groq */}
+                  {restaurant.dynamicReason && (
+                    <p className="rounded-[14px] bg-[#fff8f2] px-3.5 py-2.5 text-xs leading-5 text-stone-600 border border-[#f4e0d0]">
+                      ✦ {restaurant.dynamicReason}
+                    </p>
+                  )}
 
-                  {/* Precio y distancia en 2 columnas */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl bg-[#fff8f2] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">Precio</p>
-                      <p className="mt-1.5 text-sm font-semibold text-stone-900">
-                        {formatPrice(restaurant.price)}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl bg-[#fff8f2] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-stone-400">Distancia</p>
-                      <p className="mt-1.5 text-sm font-semibold text-stone-900">
-                        {formatDistance(restaurant.distanceKm)}
-                      </p>
-                    </div>
+                  {/* Metadata inline */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-[#fff5ee] px-3 py-1 text-xs font-medium text-stone-600">
+                      {restaurant.cuisine} · {restaurant.zone}
+                    </span>
+                    <span className="rounded-full bg-[#fff5ee] px-3 py-1 text-xs font-medium text-stone-600">
+                      ★ {restaurant.rating}
+                    </span>
+                    <span className="rounded-full bg-[#fff5ee] px-3 py-1 text-xs font-medium text-stone-600">
+                      {formatPrice(restaurant.price)}
+                    </span>
+                    <span className="rounded-full bg-[#fff5ee] px-3 py-1 text-xs font-medium text-stone-600">
+                      📍 {formatDistance(restaurant.distanceKm)}
+                    </span>
                   </div>
 
                   {/* CTA */}
-                  <TrackRestaurantLink
-                    href={`/restaurant/${restaurant.slug}?${filterParams}`}
-                    restaurantSlug={restaurant.slug}
-                    className="block rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.22)]"
-                  >
-                    Ver detalle →
-                  </TrackRestaurantLink>
+                  <div className="flex gap-2">
+                    <FavoriteButton slug={restaurant.slug} label="Guardar" compact />
+                    <TrackRestaurantLink
+                      href={`/restaurant/${restaurant.slug}?${filterParams}`}
+                      restaurantSlug={restaurant.slug}
+                      className="flex-1 rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(242,122,63,0.32)]"
+                    >
+                      Ver detalle →
+                    </TrackRestaurantLink>
+                  </div>
                 </div>
               </article>
             ))}
