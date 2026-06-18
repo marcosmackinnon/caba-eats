@@ -5,6 +5,7 @@ import HomeSearch from "@/components/HomeSearch";
 import { getRestaurantPhotoUrl } from "@/data/photos";
 import { restaurants } from "@/data/restaurants";
 import { trendingSpot } from "@/data/trending";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home({
   searchParams,
@@ -29,6 +30,16 @@ export default async function Home({
   if (params?.error === "access_denied") {
     redirect("/auth?error=access_denied");
   }
+
+  // La app arranca en el login: si no hay sesión, mandamos a /auth.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/auth");
+  }
+
   const trendingRestaurant =
     restaurants.find(
       (restaurant) => restaurant.slug === trendingSpot.restaurantSlug,
