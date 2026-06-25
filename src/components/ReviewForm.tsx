@@ -15,83 +15,16 @@ type Props = {
   initialRating?: number;
   initialBody?: string;
   initialPhotoUrl?: string;
-  initialComidaRating?: number | null;
-  initialServicioRating?: number | null;
-  initialAmbienteRating?: number | null;
-  initialNoiseLevel?: string | null;
-  initialGroupType?: string | null;
+  initialPriceRange?: string | null;
 };
 
-const NOISE_OPTIONS = ["Tranquilo", "Moderado", "Animado"];
-const GROUP_OPTIONS = ["Solo", "En pareja", "Con amigos", "En familia"];
-const SUB_LABELS = ["Comida", "Servicio", "Ambiente"] as const;
-
-function MiniStarPicker({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  disabled?: boolean;
-}) {
-  const [hovered, setHovered] = useState<number | null>(null);
-  const display = hovered ?? value;
-  return (
-    <div className="flex items-center gap-0.5" onMouseLeave={() => setHovered(null)}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          disabled={disabled}
-          onMouseEnter={() => setHovered(star)}
-          onClick={() => onChange(star)}
-          aria-label={`${star} estrellas`}
-          className="p-0.5"
-        >
-          <svg viewBox="0 0 20 20" className="h-5 w-5" aria-hidden>
-            <path
-              fill={display >= star ? "#f27a3f" : "#e5e7eb"}
-              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-            />
-          </svg>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function ChipGroup({
-  options,
-  value,
-  onChange,
-  disabled,
-}: {
-  options: string[];
-  value: string | null;
-  onChange: (v: string | null) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {options.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          disabled={disabled}
-          onClick={() => onChange(value === opt ? null : opt)}
-          className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
-            value === opt
-              ? "border-[#f27a3f] bg-[#fff1e7] text-[#c96124]"
-              : "border-stone-200 bg-white text-stone-600 hover:border-[#f2b48a]"
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  );
-}
+const PRICE_OPTIONS = [
+  "Menos de $15.000",
+  "$15.000 – $30.000",
+  "$30.000 – $50.000",
+  "$50.000 – $80.000",
+  "Más de $80.000",
+];
 
 export default function ReviewForm({
   restaurantSlug,
@@ -101,11 +34,7 @@ export default function ReviewForm({
   initialRating = 0,
   initialBody = "",
   initialPhotoUrl,
-  initialComidaRating = null,
-  initialServicioRating = null,
-  initialAmbienteRating = null,
-  initialNoiseLevel = null,
-  initialGroupType = null,
+  initialPriceRange = null,
 }: Props) {
   const isEdit = Boolean(reviewId);
   const supabase = useMemo(() => createClient(), []);
@@ -115,11 +44,7 @@ export default function ReviewForm({
   const [body, setBody] = useState(initialBody);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(initialPhotoUrl ?? null);
-  const [comidaRating, setComidaRating] = useState(initialComidaRating ?? 0);
-  const [servicioRating, setServicioRating] = useState(initialServicioRating ?? 0);
-  const [ambienteRating, setAmbienteRating] = useState(initialAmbienteRating ?? 0);
-  const [noiseLevel, setNoiseLevel] = useState<string | null>(initialNoiseLevel ?? null);
-  const [groupType, setGroupType] = useState<string | null>(initialGroupType ?? null);
+  const [priceRange, setPriceRange] = useState<string | null>(initialPriceRange ?? null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -137,7 +62,7 @@ export default function ReviewForm({
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (rating === 0) { setError("Elegí un puntaje general."); return; }
+    if (rating === 0) { setError("Elegí un puntaje."); return; }
     if (!isEdit && !photoFile) { setError("La foto es obligatoria."); return; }
     setSubmitting(true);
 
@@ -160,18 +85,18 @@ export default function ReviewForm({
       rating,
       body: body.trim() || null,
       photo_url: photoUrl,
-      comida_rating: comidaRating || null,
-      servicio_rating: servicioRating || null,
-      ambiente_rating: ambienteRating || null,
-      noise_level: noiseLevel,
-      group_type: groupType,
+      price_range: priceRange,
     };
 
     if (isEdit) {
       const { error: err } = await supabase.from("reviews").update(payload).eq("id", reviewId);
       if (err) { setError("No se pudo guardar el cambio."); setSubmitting(false); return; }
     } else {
-      const { error: err } = await supabase.from("reviews").insert({ user_id: user.id, restaurant_slug: restaurantSlug, ...payload });
+      const { error: err } = await supabase.from("reviews").insert({
+        user_id: user.id,
+        restaurant_slug: restaurantSlug,
+        ...payload,
+      });
       if (err) { setError("No se pudo guardar la reseña."); setSubmitting(false); return; }
     }
 
@@ -180,16 +105,14 @@ export default function ReviewForm({
   }
 
   const ratingLabel = rating === 0 ? "" : rating <= 1 ? "Muy malo" : rating <= 2 ? "Malo" : rating <= 3 ? "Regular" : rating <= 4 ? "Bueno" : "Excelente";
-  const subVals = [comidaRating, servicioRating, ambienteRating];
-  const subSetters = [setComidaRating, setServicioRating, setAmbienteRating];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
 
-      {/* 1 · Puntaje general */}
+      {/* 1 · Puntaje general (obligatorio) */}
       <div>
         <p className="mb-2 text-sm font-semibold text-stone-800">
-          Puntaje general <span className="text-[#f27a3f]">*</span>
+          Puntaje <span className="text-[#f27a3f]">*</span>
         </p>
         <StarPicker value={rating} onChange={setRating} disabled={submitting} />
         {ratingLabel && (
@@ -197,25 +120,7 @@ export default function ReviewForm({
         )}
       </div>
 
-      {/* 2 · Sub-ratings */}
-      <div className="rounded-[18px] border border-stone-100 bg-stone-50 p-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">
-          Detalles <span className="ml-1 font-normal normal-case tracking-normal text-stone-300">· opcional</span>
-        </p>
-        <div className="space-y-3">
-          {SUB_LABELS.map((label, i) => (
-            <div key={label} className="flex items-center gap-3">
-              <span className="w-20 text-sm font-medium text-stone-700">{label}</span>
-              <MiniStarPicker value={subVals[i]} onChange={subSetters[i]} disabled={submitting} />
-              {subVals[i] > 0 && (
-                <span className="text-xs font-semibold text-[#c96124]">{subVals[i]}/5</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3 · Foto */}
+      {/* 2 · Foto (obligatoria en create, opcional en edit) */}
       <div>
         <p className="mb-2 text-sm font-semibold text-stone-800">
           Foto de tu visita{" "}
@@ -241,23 +146,31 @@ export default function ReviewForm({
         )}
       </div>
 
-      {/* 4 · Ambiente */}
+      {/* 3 · Presupuesto (opcional) */}
       <div>
         <p className="mb-2.5 text-sm font-semibold text-stone-800">
-          ¿Cómo era el ambiente? <span className="text-xs font-normal text-stone-400">· opcional</span>
+          ¿Cuánto gastaste por persona? <span className="text-xs font-normal text-stone-400">· opcional</span>
         </p>
-        <ChipGroup options={NOISE_OPTIONS} value={noiseLevel} onChange={setNoiseLevel} disabled={submitting} />
+        <div className="flex flex-wrap gap-2">
+          {PRICE_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              disabled={submitting}
+              onClick={() => setPriceRange(priceRange === opt ? null : opt)}
+              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                priceRange === opt
+                  ? "border-[#f27a3f] bg-[#fff1e7] text-[#c96124]"
+                  : "border-stone-200 bg-white text-stone-600 hover:border-[#f2b48a]"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* 5 · Con quién */}
-      <div>
-        <p className="mb-2.5 text-sm font-semibold text-stone-800">
-          ¿Fuiste con...? <span className="text-xs font-normal text-stone-400">· opcional</span>
-        </p>
-        <ChipGroup options={GROUP_OPTIONS} value={groupType} onChange={setGroupType} disabled={submitting} />
-      </div>
-
-      {/* 6 · Comentario */}
+      {/* 4 · Comentario (opcional) */}
       <div>
         <p className="mb-2 text-sm font-semibold text-stone-800">
           Comentario <span className="text-xs font-normal text-stone-400">· opcional</span>

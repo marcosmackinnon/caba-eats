@@ -27,10 +27,6 @@ export default async function PreferenciasPage({
       selectedCuisine={selectedCuisine}
       initialBudget={Number(params.budget ?? "28000")}
       initialDistance={Number(params.distance ?? "5")}
-      initialVibes={(params.vibe ?? "")
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean)}
       initialLocation={
         params.userLat && params.userLng
           ? {

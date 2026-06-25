@@ -6,17 +6,6 @@ import { FormEvent, useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { getNearestNeighborhoodLabel, isWithinCABA } from "@/data/restaurants";
 
-const vibeOptions = [
-  "Tranquilo",
-  "Lindo",
-  "Romántico",
-  "Rápido",
-  "Especial",
-  "Social",
-];
-
-const anyVibeLabel = "Me da igual";
-
 const neighborhoods = [
   "Palermo",
   "Recoleta",
@@ -52,20 +41,17 @@ export default function PreferenciasClient({
   selectedCuisine,
   initialBudget,
   initialDistance,
-  initialVibes,
   initialLocation,
 }: {
   selectedPlan: string;
   selectedCuisine: string;
   initialBudget: number;
   initialDistance: number;
-  initialVibes: string[];
   initialLocation: LocationState;
 }) {
   const router = useRouter();
   const [budget, setBudget] = useState(initialBudget);
   const [distance, setDistance] = useState(initialDistance);
-  const [selectedVibes, setSelectedVibes] = useState<string[]>(initialVibes);
   const [showDistance, setShowDistance] = useState(false);
   const [location, setLocation] = useState<LocationState>(initialLocation);
 
@@ -104,25 +90,12 @@ export default function PreferenciasClient({
     setLocation({ type: "manual", zone });
   }
 
-  function toggleVibe(option: string) {
-    setSelectedVibes((current) =>
-      current.includes(option)
-        ? current.filter((item) => item !== option)
-        : [...current, option],
-    );
-  }
-
-  function activateAnyVibe() {
-    setSelectedVibes([]);
-  }
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const params = new URLSearchParams({
       plan: selectedPlan,
       cuisine: selectedCuisine,
-      vibe: selectedVibes.join(","),
       budget: String(budget),
       distance: String(distance),
     });
@@ -357,46 +330,6 @@ export default function PreferenciasClient({
               )}
             </div>
 
-            {/* ── VIBRA — se oculta en modo rápido ── */}
-            {!isQuickMode && (
-              <fieldset className="space-y-3">
-                <legend className="text-sm font-semibold text-stone-700">
-                  ¿Qué priorizás en el lugar?
-                </legend>
-                <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                  {vibeOptions.map((option) => {
-                    const isSelected = selectedVibes.includes(option);
-                    return (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => toggleVibe(option)}
-                        className={`rounded-full px-3 py-2 text-sm font-medium transition sm:px-4 ${
-                          isSelected
-                            ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
-                            : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="flex justify-center pt-1">
-                  <button
-                    type="button"
-                    onClick={activateAnyVibe}
-                    className={`min-w-40 rounded-full px-4 py-2 text-sm font-medium transition ${
-                      selectedVibes.length === 0
-                        ? "bg-[#f27a3f] text-white shadow-[0_12px_30px_rgba(242,122,63,0.25)]"
-                        : "border border-[#ead7c9] bg-white text-stone-600 hover:border-[#f2b48a]"
-                    }`}
-                  >
-                    {anyVibeLabel}
-                  </button>
-                </div>
-              </fieldset>
-            )}
 
             <div className="flex flex-col gap-3 border-t border-[#f3e3d7] pt-4 sm:flex-row sm:pt-5">
               <Link
