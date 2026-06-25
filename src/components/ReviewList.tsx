@@ -155,7 +155,7 @@ export default function ReviewList({
                   {/* Precio por persona */}
                   {review.price_range && (
                     <span className="inline-block rounded-full bg-[#fff5ee] px-3 py-1 text-xs font-medium text-stone-600">
-                      💸 {review.price_range} por persona
+                      💸 ${Number(review.price_range).toLocaleString("es-AR")} por persona
                     </span>
                   )}
 

@@ -18,13 +18,8 @@ type Props = {
   initialPriceRange?: string | null;
 };
 
-const PRICE_OPTIONS = [
-  "Menos de $15.000",
-  "$15.000 – $30.000",
-  "$30.000 – $50.000",
-  "$50.000 – $80.000",
-  "Más de $80.000",
-];
+const MIN_PRICE = 1000;
+const MAX_PRICE = 80000;
 
 export default function ReviewForm({
   restaurantSlug,
@@ -44,7 +39,10 @@ export default function ReviewForm({
   const [body, setBody] = useState(initialBody);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(initialPhotoUrl ?? null);
-  const [priceRange, setPriceRange] = useState<string | null>(initialPriceRange ?? null);
+  const [priceEnabled, setPriceEnabled] = useState<boolean>(initialPriceRange != null);
+  const [priceValue, setPriceValue] = useState<number>(
+    initialPriceRange != null ? Number(initialPriceRange) : 15000
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -85,7 +83,7 @@ export default function ReviewForm({
       rating,
       body: body.trim() || null,
       photo_url: photoUrl,
-      price_range: priceRange,
+      price_range: priceEnabled ? String(priceValue) : null,
     };
 
     if (isEdit) {
@@ -148,26 +146,47 @@ export default function ReviewForm({
 
       {/* 3 · Presupuesto (opcional) */}
       <div>
-        <p className="mb-2.5 text-sm font-semibold text-stone-800">
-          ¿Cuánto gastaste por persona? <span className="text-xs font-normal text-stone-400">· opcional</span>
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {PRICE_OPTIONS.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              disabled={submitting}
-              onClick={() => setPriceRange(priceRange === opt ? null : opt)}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
-                priceRange === opt
-                  ? "border-[#f27a3f] bg-[#fff1e7] text-[#c96124]"
-                  : "border-stone-200 bg-white text-stone-600 hover:border-[#f2b48a]"
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
+        <div className="mb-2.5 flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-stone-800">
+            ¿Cuánto gastaste por persona? <span className="text-xs font-normal text-stone-400">· opcional</span>
+          </p>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={() => setPriceEnabled((prev) => !prev)}
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition ${
+              priceEnabled
+                ? "bg-[#f27a3f] text-white"
+                : "border border-stone-200 bg-white text-stone-500 hover:border-[#f2b48a]"
+            }`}
+          >
+            {priceEnabled ? "Activado" : "Agregar"}
+          </button>
         </div>
+        {priceEnabled && (
+          <div className="rounded-[18px] border border-[#f0dccd] bg-[#fffaf6] p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-stone-500">Precio por persona</span>
+              <span className="rounded-full bg-[#fff1e7] px-3 py-1 text-sm font-semibold text-[#c96124]">
+                ${priceValue.toLocaleString("es-AR")}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={MIN_PRICE}
+              max={MAX_PRICE}
+              step={1000}
+              value={priceValue}
+              disabled={submitting}
+              onChange={(e) => setPriceValue(Number(e.target.value))}
+              className="w-full accent-[#f27a3f]"
+            />
+            <div className="flex justify-between text-xs text-stone-400">
+              <span>${MIN_PRICE.toLocaleString("es-AR")}</span>
+              <span>${MAX_PRICE.toLocaleString("es-AR")}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 4 · Comentario (opcional) */}

@@ -382,17 +382,30 @@ export default async function ResultadosPage({
                 </RestaurantPhoto>
 
                 <div className="space-y-3 p-4 sm:p-5">
-                  {/* Nombre + descripción */}
+                  {/* Nombre + match label */}
                   <div>
-                    <h2 className="text-xl font-semibold tracking-[-0.03em]">
-                      {restaurant.name}
-                    </h2>
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="text-xl font-semibold tracking-[-0.03em]">
+                        {restaurant.name}
+                      </h2>
+                      <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
+                        restaurant.matchLabel === "Ideal"
+                          ? "border-[#f2b48a] bg-[#fff1e7] text-[#c96124]"
+                          : restaurant.matchLabel === "Muy bueno"
+                          ? "border-[#e8d6c8] bg-[#fff8f2] text-[#b07050]"
+                          : restaurant.matchLabel === "Buena opción"
+                          ? "border-stone-200 bg-stone-50 text-stone-600"
+                          : "border-stone-100 bg-white text-stone-400"
+                      }`}>
+                        {restaurant.matchLabel}
+                      </span>
+                    </div>
                     <p className="mt-1 text-sm leading-6 text-stone-500">
                       {shortenText(restaurant.shortDescription, 80)}
                     </p>
                   </div>
 
-                  {/* Razón Groq */}
+                  {/* Razón dinámica */}
                   {restaurant.dynamicReason && (
                     <p className="rounded-[14px] bg-[#fff8f2] px-3.5 py-2.5 text-xs leading-5 text-stone-600 border border-[#f4e0d0]">
                       ✦ {restaurant.dynamicReason}
