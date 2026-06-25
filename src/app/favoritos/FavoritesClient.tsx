@@ -76,12 +76,6 @@ export default function FavoritesClient() {
                   label="Compartir shortlist"
                   primary
                 />
-                <Link
-                  href="/plan"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
-                >
-                  Seguir explorando
-                </Link>
               </div>
             ) : null}
           </div>
@@ -175,28 +169,12 @@ export default function FavoritesClient() {
                     <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                       <FavoriteButton slug={restaurant.slug} label="Guardar" />
                       <Link
-                        href={`/preferencias?plan=${encodeURIComponent(
-                          restaurant.planFit[0] ?? "Con amigos",
-                        )}&cuisine=${encodeURIComponent(
-                          restaurant.cuisine,
-                        )}&zone=${encodeURIComponent(
-                          restaurant.zone,
-                        )}&budget=${encodeURIComponent(
-                          String(restaurant.price),
-                        )}&distance=5&vibe=${encodeURIComponent(
-                          restaurant.vibeTags.slice(0, 2).join(","),
-                        )}`}
-                        className="rounded-full border border-[#e8d6c8] bg-white px-5 py-3 text-center text-base font-semibold text-stone-700 transition hover:bg-[#fff8f2]"
-                      >
-                        Buscar parecido
-                      </Link>
-                      <Link
                         href={
                           lastSearchParams
                             ? `/restaurant/${restaurant.slug}?${lastSearchParams}`
                             : `/restaurant/${restaurant.slug}`
                         }
-                        className="rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.25)]"
+                        className="flex-1 rounded-full bg-[#f27a3f] px-5 py-3 text-center text-base font-semibold text-white shadow-[0_16px_35px_rgba(242,122,63,0.25)]"
                       >
                         Ver detalle
                       </Link>
