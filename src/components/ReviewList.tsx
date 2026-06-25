@@ -13,6 +13,11 @@ type Review = {
   body: string | null;
   photo_url: string;
   created_at: string;
+  comida_rating: number | null;
+  servicio_rating: number | null;
+  ambiente_rating: number | null;
+  noise_level: string | null;
+  group_type: string | null;
 };
 
 function StarDisplay({ rating }: { rating: number }) {
@@ -40,6 +45,21 @@ function StarDisplay({ rating }: { rating: number }) {
   );
 }
 
+function MiniSubRating({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="w-16 text-[11px] text-stone-400">{label}</span>
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((s) => (
+          <svg key={s} viewBox="0 0 20 20" className="h-3 w-3" aria-hidden>
+            <path fill={value >= s ? "#f27a3f" : "#e5e7eb"} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ReviewList({
   restaurantSlug,
   restaurantName,
@@ -64,7 +84,7 @@ export default function ReviewList({
       setLoading(true);
       const { data } = await supabase
         .from("reviews")
-        .select("id, user_id, rating, body, photo_url, created_at")
+        .select("id, user_id, rating, body, photo_url, created_at, comida_rating, servicio_rating, ambiente_rating, noise_level, group_type")
         .eq("restaurant_slug", restaurantSlug)
         .order("created_at", { ascending: false });
       setReviews((data as Review[]) ?? []);
@@ -110,6 +130,7 @@ export default function ReviewList({
         const isOwn = currentUserId != null && review.user_id === currentUserId;
         const isEditing = editingId === review.id;
         const isDeleting = deletingId === review.id;
+        const hasSubRatings = review.comida_rating || review.servicio_rating || review.ambiente_rating;
 
         return (
           <article
@@ -120,11 +141,7 @@ export default function ReviewList({
               <div className="p-4">
                 <div className="mb-4 flex items-center justify-between">
                   <p className="text-sm font-semibold text-stone-800">Editar reseña</p>
-                  <button
-                    type="button"
-                    onClick={() => setEditingId(null)}
-                    className="text-xs text-stone-400 transition hover:text-stone-600"
-                  >
+                  <button type="button" onClick={() => setEditingId(null)} className="text-xs text-stone-400 transition hover:text-stone-600">
                     Cancelar
                   </button>
                 </div>
@@ -135,48 +152,67 @@ export default function ReviewList({
                   initialRating={review.rating}
                   initialBody={review.body ?? ""}
                   initialPhotoUrl={review.photo_url}
+                  initialComidaRating={review.comida_rating}
+                  initialServicioRating={review.servicio_rating}
+                  initialAmbienteRating={review.ambiente_rating}
+                  initialNoiseLevel={review.noise_level}
+                  initialGroupType={review.group_type}
                   onSuccess={() => { setEditingId(null); onRefresh(); }}
                 />
               </div>
             ) : (
               <>
+                {/* Foto */}
                 <div className="relative h-40 w-full">
-                  <Image
-                    src={review.photo_url}
-                    alt="Foto de la visita"
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={review.photo_url} alt="Foto de la visita" fill className="object-cover" />
                 </div>
-                <div className="space-y-2 p-4">
+
+                <div className="space-y-3 p-4">
+                  {/* Rating + fecha */}
                   <div className="flex items-center justify-between gap-2">
                     <StarDisplay rating={review.rating} />
                     <span className="text-xs text-stone-400">
-                      {new Date(review.created_at).toLocaleDateString("es-AR", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {new Date(review.created_at).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}
                     </span>
                   </div>
+
+                  {/* Sub-ratings */}
+                  {hasSubRatings && (
+                    <div className="rounded-[14px] bg-stone-50 p-3 space-y-1.5">
+                      {review.comida_rating ? <MiniSubRating label="Comida" value={review.comida_rating} /> : null}
+                      {review.servicio_rating ? <MiniSubRating label="Servicio" value={review.servicio_rating} /> : null}
+                      {review.ambiente_rating ? <MiniSubRating label="Ambiente" value={review.ambiente_rating} /> : null}
+                    </div>
+                  )}
+
+                  {/* Chips contextuales */}
+                  {(review.noise_level || review.group_type) && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {review.group_type && (
+                        <span className="rounded-full bg-[#fff5ee] px-2.5 py-1 text-xs font-medium text-stone-600">
+                          {review.group_type === "Solo" ? "👤" : review.group_type === "En pareja" ? "👫" : review.group_type === "Con amigos" ? "👥" : "👨‍👩‍👧"} {review.group_type}
+                        </span>
+                      )}
+                      {review.noise_level && (
+                        <span className="rounded-full bg-[#fff5ee] px-2.5 py-1 text-xs font-medium text-stone-600">
+                          {review.noise_level === "Tranquilo" ? "🔇" : review.noise_level === "Moderado" ? "🔉" : "🔊"} {review.noise_level}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Comentario */}
                   {review.body && (
                     <p className="text-sm leading-6 text-stone-700">{review.body}</p>
                   )}
+
+                  {/* Acciones propias */}
                   {isOwn && (
-                    <div className="flex gap-3 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => setEditingId(review.id)}
-                        className="text-xs font-medium text-[#c96124] transition hover:underline"
-                      >
+                    <div className="flex gap-3 border-t border-stone-100 pt-2">
+                      <button type="button" onClick={() => setEditingId(review.id)} className="text-xs font-medium text-[#c96124] transition hover:underline">
                         Editar
                       </button>
-                      <button
-                        type="button"
-                        disabled={isDeleting}
-                        onClick={() => handleDelete(review.id)}
-                        className="text-xs font-medium text-stone-400 transition hover:text-red-500 disabled:opacity-50"
-                      >
+                      <button type="button" disabled={isDeleting} onClick={() => handleDelete(review.id)} className="text-xs font-medium text-stone-400 transition hover:text-red-500 disabled:opacity-50">
                         {isDeleting ? "Eliminando..." : "Eliminar"}
                       </button>
                     </div>
